@@ -1,0 +1,26 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+
+    .brand, .menu {
+        display: flex;
+        align-items: center;
+    }
+
+    .brand {
+        #logo {
+            margin-right: 24px;
+        }
+        
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+        }
+    }
+
+    .menu {
+        & > * {
+            margin-left: 10px;
+        }
+    }
+}

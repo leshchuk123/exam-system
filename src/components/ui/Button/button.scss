@@ -1,0 +1,27 @@
+@import "../../../styles/sizes.scss";
+@import "../../../styles/colors.scss";
+
+.btn {
+    padding: 5px 10px;
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        background-color: #ccc;
+        border-color: #ccc;
+    }
+
+    &.primary {
+        background-color: $blue;
+        border-color: $blue;
+        color: white;
+
+        &:hover {
+            background-color: adjust-hue($color: $blue, $degrees: -10);
+            border-color: adjust-hue($color: $blue, $degrees: -10);
+        }
+    }
+}

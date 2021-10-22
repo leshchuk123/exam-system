@@ -1,0 +1,25 @@
+@import "./styles/sizes.scss";
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  width: 100vw;
+  padding: 10px;
+
+  @media screen and (min-width: $sm) {
+    padding: 10px 24px;
+  }
+  @media screen and (min-width: $md) {
+    padding: 20px 32px;
+  }
+  @media screen and (min-width: $lg) {
+    max-width: $lg;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
