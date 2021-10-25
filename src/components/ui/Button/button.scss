@@ -9,7 +9,7 @@
     cursor: pointer;
     user-select: none;
 
-    &:hover {
+    &:not(.unhover):hover {
         background-color: #ccc;
         border-color: #ccc;
     }
@@ -19,9 +19,23 @@
         border-color: $blue;
         color: white;
 
-        &:hover {
+        &:not(.unhover):hover {
             background-color: adjust-hue($color: $blue, $degrees: -10);
             border-color: adjust-hue($color: $blue, $degrees: -10);
+        }
+
+    }
+
+    &.disabled {
+        cursor: not-allowed;
+        color: white;
+        background-color: rgb(126, 126, 126);
+        border-color: rgb(126, 126, 126);
+
+        &:hover {
+            color: white !important;
+            background-color: rgb(126, 126, 126) !important;
+            border-color: rgb(126, 126, 126) !important;
         }
     }
 }

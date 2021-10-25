@@ -1,0 +1,60 @@
+@import "../../../styles/sizes.scss";
+
+.icon {
+    &.xs {
+        width: $icon_xs;
+        height: $icon_xs;
+        img {
+            width: $icon_xs;
+            height: $icon_xs;
+        }
+    }
+    &.sm {
+        width: $icon_sm;
+        height: $icon_sm;
+        img {
+            width: $icon_sm;
+            height: $icon_sm;
+        }
+    }
+    &.md {
+        width: $icon_md;
+        height: $icon_md;
+        img {
+            width: $icon_md;
+            height: $icon_md;
+        }
+    }
+    &.lg {
+        width: $icon_lg;
+        height: $icon_lg;
+        img {
+            width: $icon_lg;
+            height: $icon_lg;
+        }
+    }
+    &.xl {
+        width: $icon_xl;
+        height: $icon_xl;
+        img {
+            width: $icon_xl;
+            height: $icon_xl;
+        }
+    }
+    &.xxl {
+        width: $icon_xxl;
+        height: $icon_xxl;
+        img {
+            width: $icon_xxl;
+            height: $icon_xxl;
+        }
+    }
+    &.hg {
+        width: $icon_hg;
+        height: $icon_hg;
+        img {
+            width: $icon_hg;
+            height: $icon_hg;
+        }
+    }
+}

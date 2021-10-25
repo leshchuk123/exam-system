@@ -1,0 +1,74 @@
+@import "../../styles/sizes.scss";
+
+.modal_shim {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #0000005e;
+    z-index: 100;
+
+    &.on {
+        display: block;
+    }
+}
+
+.modal {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 20px;
+    background-color: whitesmoke;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    & > * {
+        padding: 0 20px;
+    }
+
+    @media screen and (min-width: $sm) {
+        top: 50%;
+        right: unset;
+        bottom: unset;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw;
+        height: 80vh;
+    }
+    @media screen and (min-width: $md) {
+        width: 50vw;
+        height: 50vh;
+    }
+    @media screen and (min-width: $lg) {
+        width: calc(#{$lg} / 2);
+        height: calc(#{$lg} / 3);
+    }
+}
+
+.modal_body {
+    flex: 1;
+}
+.modal_header, .modal_footer {
+    text-align: center;
+}
+
+.modal_footer {
+    display: flex;
+    justify-content: center;
+    gap: 0 8px;
+}
+
+.modal_content {
+    overflow-y: auto;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+}

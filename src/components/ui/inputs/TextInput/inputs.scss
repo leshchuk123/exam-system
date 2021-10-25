@@ -1,0 +1,18 @@
+.input_group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    label {
+        width: 100px;
+        text-align: right;
+    }
+    .control {
+        &[type=text], 
+        &[type=email], 
+        &[type=password] {
+            padding: 10px;
+            flex: 1;
+        }
+    }
+}
