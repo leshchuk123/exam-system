@@ -23,20 +23,19 @@ export interface InputProps {
     maxLength?: number
     minLength?: number
     fieldMask?: string
-    validator?: IValidator
-    bonus?: number
     showLabel?: boolean
     error?: string
-    onEnter?: () => void
-    onFocus?: FocusEventHandler
-    onBackspaceOrDelete?: () => void
     style?: CSSProperties
     maskOptions?: AnyMaskedOptions
+    validator?: IValidator
+    onEnter?: () => void
+    onBackspaceOrDelete?: () => void
+    onFocus?: FocusEventHandler
 }    
 export type ValidatorInputData = {
-    valid: boolean
     name: string
     value: string | number | boolean | object
+    valid: boolean
     dirty?: boolean
 }    
 export interface IValidator {(data: ValidatorInputData): void}
@@ -66,7 +65,6 @@ const InputText: FC<InputProps> = (props): ReactElement => {
         style = {},
         maskOptions,
     } = props;
-    console.log({label})
 
     const ref = useRef<HTMLInputElement>(null);
     const mask = useRef<InputMask<AnyMaskedOptions>>();

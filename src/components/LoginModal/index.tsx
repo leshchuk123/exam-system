@@ -1,45 +1,41 @@
-import React, { FC, ReactElement, useEffect, useState } from "react";
-// import { useDispatch } from "react-redux";
+import { FC, useEffect, useState } from "react";
 
 import Modal from "../Modal";
 import Logo from "../ui/Logo";
-import Button, {BTN_TYPE} from "../ui/Button";
+import Button, {BTN_SIZE, BTN_TYPE} from "../ui/Button";
 import EmailInput from "../ui/inputs/EmailInput";
 import PasswordInput from "../ui/inputs/PasswordInput";
 import { IValidator } from "../ui/inputs/TextInput";
 
-// import { setUser } from "../../app/reducers/user";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-// import { authUserThunk } from "../../app/thunks/user";
 import { auth } from "../../reducers/user";
+import { AppDispatch } from "../../store";
+import { connect } from "react-redux";
 
-export interface ILoginModal {
-    open?: boolean
+export interface OwnProps {
+  open?: boolean
 }
 
-const LoginModal:FC<ILoginModal> = (props): ReactElement => {
-    const { open } = props;
+interface DispatchProps {
+  doAuth: (email: string, password: string) => void
+}
+ 
+type Props =  DispatchProps & OwnProps;
+
+const LoginModal:FC<Props> = (props): JSX.Element => {
+    const { open, doAuth } = props;
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [valid, setValid] = useState<boolean>(false);
 
-    const dispatch = useAppDispatch();
-    const user = useAppSelector(state => state.user);
-    console.log(Date.now(), 2, user)
-
-    useEffect(() => {
-        console.log(Date.now(), 4, user)
-        debugger
-    }, [user]);
-
     const submit = async () => {
         if (valid) {
-            // dispatch(auth(email, password))
+            const md5 = require('md5');
+            doAuth(email, md5(password));
         }
     }
 
-    const validator: IValidator = ({ valid, name, dirty, value}) => {
+    const validator: IValidator = ({ valid, name, value}) => {
         if (name === "email") setEmail(valid ? String(value) : "");
         else if (name === "password") setPassword(valid ? String(value) : "");
     }
@@ -69,16 +65,17 @@ const LoginModal:FC<ILoginModal> = (props): ReactElement => {
         <div className="modal_footer">
             <Button 
                 text="Submit" 
-                type={BTN_TYPE.PRIMARY} 
+                type={BTN_TYPE.PRIMARY}
+                size={BTN_SIZE.LG}
                 disabled={!valid} 
                 onClick={submit} />
         </div>
     </Modal>
 }
 
-// const mapDispatchToProps = dispatch: AppDispatch => {
-//     return {
-//         doAuth: (email, password) => dispatch(auth(email, password))
-//     }
-// }
-export default LoginModal;
+const mapDispatchToProps = (dispatch: AppDispatch) => {
+    return {
+        doAuth: (email:string, password: string) => auth(email, password, dispatch),
+    }
+}
+export default connect<null, DispatchProps, OwnProps>(null, mapDispatchToProps)(LoginModal);

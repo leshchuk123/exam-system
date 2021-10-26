@@ -35,11 +35,6 @@ export const iterate = (callback: (i: number, ...args: any[]) => any, times: num
     }
 }
 
-// export const arrayToMap = function<T>(array: T[]): Map<number, T> {
-//     const map: Map<number, T> = new Map();
-//     array.forEach(entry => map.set(Number(entry.id), entry));
-//     return map;
-// }
 export const mapToArray = function<T>(map: Map<number, T> = new Map()): T[] {
     const arr: T[] = [];
     map.forEach(entry => arr.push(entry));

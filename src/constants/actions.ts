@@ -3,4 +3,3 @@ export enum USER {
     UPDATE = "user_update",
     DELETE = "user_delete",
 }
-    

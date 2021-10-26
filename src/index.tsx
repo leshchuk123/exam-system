@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider, useStore } from "react-redux";
+import { Provider } from "react-redux";
 import reportWebVitals from './reportWebVitals';
 import { makeServer } from "./mirage/server";
 import { dump } from "./mirage/mocks/constants";
@@ -11,7 +11,6 @@ import store from "./store";
 
 import './index.css';
 
-console.log("NODE_ENV", process.env.NODE_ENV)
 if (process.env.NODE_ENV === "development") {
     const server = makeServer({ environment: "development" });
     server.db.loadData(dump)

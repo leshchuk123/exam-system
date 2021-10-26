@@ -11,6 +11,7 @@ export interface IButton extends IUIComponent, IClickableElement {
     disabled?: boolean
     active?: boolean
     type?: BTN_TYPE
+    size?: BTN_SIZE
     icon?: string
     unhover?: boolean
 }
@@ -21,11 +22,18 @@ export enum BTN_TYPE {
     WARN = "warning",
     DANGER = "danger",
 }
+export enum BTN_SIZE {
+    SM = "small",
+    MD = "",
+    LG = "large",
+    HG = "huge",
+}
 
 const Button: FC<IButton> = (props): ReactElement => {
     const {
         text = "",
         type = BTN_TYPE.NONE,
+        size = BTN_SIZE.MD,
         disabled = false,
         active = false,
         onClick = () => void 0,
@@ -34,7 +42,7 @@ const Button: FC<IButton> = (props): ReactElement => {
         icon,
         unhover = false,
     } = props;
-    const cls = ["btn", type, ...className.split(/\s+/g)];
+    const cls = ["btn", type, size, ...className.split(/\s+/g)];
     if (disabled) cls.push("disabled");
     else if (active) cls.push("active");
     if (unhover) cls.push("unhover");

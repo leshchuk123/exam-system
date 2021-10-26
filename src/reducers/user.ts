@@ -1,11 +1,8 @@
 import { USER } from "../constants/actions";
-import { IDataUser } from "../interfaces/data";
+import { IDataUser, IReducer } from "../interfaces/data";
 import * as users from "../api/users";
 import { AppDispatch } from "../store";
 
-interface IReducer {
-    (state?: IDataUser, action?: {type?: USER, payload?: IDataUser}): void
-}
 const initialState: IDataUser = {
     id: 0,
     firstName: "",
@@ -17,19 +14,18 @@ const initialState: IDataUser = {
     grade: 0,
 };
 
-export const auth = (email: string, password: string) => (dispatch: AppDispatch) => {
+export const auth = (email: string, password: string, dispatch: AppDispatch) => {
     users.auth(email, password)
         .then(response => {
             if (response.status === 200 || response.status === 201) return response.json();
             else return null;
         })
-        .then(json => {
-            debugger
-            dispatch({type: USER.SET, payload: json});
-        })
+        .then((json: {users: IDataUser}) => {
+            dispatch({ type: USER.SET, payload: json.users });
+        });
 }
 
-const pageReducer = (state = initialState, action = {}) => {
+const pageReducer: IReducer<IDataUser> = (state = initialState, action = {}) => {
     const { type, payload } = action;
 
     switch (type) {

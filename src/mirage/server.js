@@ -1,13 +1,10 @@
 import { createServer, Model } from "miragejs"
-import Mocks from "./mocks/mocks";
-// import { monitorEventLoopDelay } from "perf_hooks";
 
 const userUids = {
-    "andrey.leshchuk.123@gmail.com:E8k5jK3KDAFfhZn": "a9c0a48e-8dc1-4bbe-aea0-d5973a118e9a",
+    "andrey.leshchuk.123@gmail.com:17eb222afaec35f49fbc8eb4a45753ee": "a9c0a48e-8dc1-4bbe-aea0-d5973a118e9a",
 }
-export function makeServer({ environment = 'test' }) {
-    const mocks = new Mocks();
 
+export function makeServer({ environment = 'test' }) {
     return createServer({
         environment,
 
@@ -25,7 +22,6 @@ export function makeServer({ environment = 'test' }) {
             this.namespace = "api";
 
             this.post("/users/auth", (schema, request) => {
-                // console.log({schema, request})
                 const data = JSON.parse(request.requestBody);
                 const {email, password} = data;
                 const userUid = userUids[`${email}:${password}`];
@@ -33,9 +29,9 @@ export function makeServer({ environment = 'test' }) {
                 return user;
             });
 
-            this.get("/users/:someid", (schema, request) => {
+            this.get("/users/:id", (schema, request) => {
                 const { id } = request.params;
-                return schema.users.get()
+                return schema.users.find(id);
             })
         },
     });

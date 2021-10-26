@@ -49,3 +49,15 @@ export interface IDataAnswer {
     task: number | IDataTask
     option: number | IDataOption
 }
+
+export interface IReducerAction<T> {
+    type?: string
+    payload?: T
+}
+
+export interface IReducer<T> {
+    (
+        state?: IDataUser, 
+        action?: IReducerAction<T>
+    ): T
+}
