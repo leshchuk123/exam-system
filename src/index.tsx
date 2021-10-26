@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import reportWebVitals from './reportWebVitals';
 import { makeServer } from "./mirage/server";
 import { dump } from "./mirage/mocks/constants";
+import { Router } from "react-router-dom";
+import { createBrowserHistory } from 'history';
 
 import App from './App';
 
@@ -11,15 +13,19 @@ import store from "./store";
 
 import './index.css';
 
+const history = createBrowserHistory();
+
 if (process.env.NODE_ENV === "development") {
     const server = makeServer({ environment: "development" });
-    server.db.loadData(dump)
+    server.db.loadData(dump);
 }
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <App />
+            <Router history={history}>
+                <App />
+            </Router>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

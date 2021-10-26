@@ -1,14 +1,17 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState } from 'react';
+import { compose } from "recompose";
 
-import './App.scss';
+import { withRouter } from "react-router-dom";
+
+import './app.scss';
 
 import Header from "./components/Header";
 import LoginModal from "./components/LoginModal";
 
 import { RootState } from './store';
 import { connect } from 'react-redux';
-import Button, { BTN_SIZE, BTN_TYPE } from './components/ui/Button';
+import Navigation from './components/Navigation';
 
 interface IAppProps {
     userUid?: string
@@ -17,15 +20,10 @@ function App(props: IAppProps) {
     const { userUid } = props;
 
     return (
-        <div className="App">
+        <div className="app_container">
             <Header />
+            <Navigation />
             <LoginModal open={!userUid} />
-            <div className="flex gap-10" style={{alignItems:"center"}}>
-                <Button type={BTN_TYPE.PRIMARY} text="Small" size={BTN_SIZE.SM} />
-                <Button type={BTN_TYPE.PRIMARY} text="Normal" size={BTN_SIZE.MD} />
-                <Button type={BTN_TYPE.PRIMARY} text="Large" size={BTN_SIZE.LG} />
-                <Button type={BTN_TYPE.PRIMARY} text="Huge" size={BTN_SIZE.HG} />
-            </div>
         </div>
     );
 }
@@ -36,3 +34,8 @@ const mapStateToProps = (state: RootState) => {
 }
 
 export default connect(mapStateToProps)(App);
+// export default compose(
+//     withRouter,
+//     connect(mapStateToProps)
+// )(App);
+

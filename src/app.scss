@@ -13,15 +13,18 @@ body {
 .gap-10 {gap: 10px; grid-gap: 10px;}
 .gap-20 {gap: 20px; grid-gap: 20px;}
 
-.container {
+.app_container {
+    display: grid;
+    grid-gap: 0 24px;
+    grid-template-columns: repeat(12, 1fr);
     width: 100vw;
     padding: 10px;
 
     @media screen and (min-width: $sm) {
-        padding: 10px 24px;
+        padding: 0 24px;
     }
     @media screen and (min-width: $md) {
-        padding: 20px 32px;
+        padding: 0 32px;
     }
     @media screen and (min-width: $lg) {
         max-width: $lg;

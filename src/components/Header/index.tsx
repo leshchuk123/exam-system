@@ -6,7 +6,7 @@ import Logo from "../ui/Logo";
 import "./header.scss";
 
 const Header = () => {
-    return <div className="container header">
+    return <div className="header">
         <div className="title">
             <div className="title_text">
                 Exams System
