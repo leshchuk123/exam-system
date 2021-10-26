@@ -1,6 +1,6 @@
-import * as IData from "../interfaces/data";
+import * as IData from "../../interfaces/data";
 import { v4 as uuidv4 } from "uuid";
-import { iterate, range, rnd, rndArrItem } from "../helpers";
+import { iterate, range, rnd, rndArrItem } from "../../helpers";
 import { lorem, users } from "./constants";
 
 interface IDump {

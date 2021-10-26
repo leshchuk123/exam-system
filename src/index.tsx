@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from "react-redux";
+import { Provider, useStore } from "react-redux";
 import reportWebVitals from './reportWebVitals';
-import { makeServer } from "./app/server";
-import { dump } from "./mocks/constants";
+import { makeServer } from "./mirage/server";
+import { dump } from "./mirage/mocks/constants";
 
 import App from './App';
 
-import store from "./app/store";
+import store from "./store";
 
 import './index.css';
 

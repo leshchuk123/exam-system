@@ -1,5 +1,5 @@
 import React, { FC, ReactElement, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 
 import Modal from "../Modal";
 import Logo from "../ui/Logo";
@@ -8,7 +8,10 @@ import EmailInput from "../ui/inputs/EmailInput";
 import PasswordInput from "../ui/inputs/PasswordInput";
 import { IValidator } from "../ui/inputs/TextInput";
 
-import { setUser } from "../../app/reducers/user";
+// import { setUser } from "../../app/reducers/user";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+// import { authUserThunk } from "../../app/thunks/user";
+import { auth } from "../../reducers/user";
 
 export interface ILoginModal {
     open?: boolean
@@ -21,28 +24,18 @@ const LoginModal:FC<ILoginModal> = (props): ReactElement => {
     const [password, setPassword] = useState<string>("");
     const [valid, setValid] = useState<boolean>(false);
 
-    const dispatch = useDispatch();
-    
+    const dispatch = useAppDispatch();
+    const user = useAppSelector(state => state.user);
+    console.log(Date.now(), 2, user)
+
+    useEffect(() => {
+        console.log(Date.now(), 4, user)
+        debugger
+    }, [user]);
+
     const submit = async () => {
         if (valid) {
-            try {
-                const response = await fetch("/api/users/auth", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    }),
-                });
-                debugger
-                const data = await response.json();
-                dispatch(setUser(data.users))
-            } catch(err) {
-                console.log(err)
-                debugger
-            }
+            // dispatch(auth(email, password))
         }
     }
 
@@ -83,4 +76,9 @@ const LoginModal:FC<ILoginModal> = (props): ReactElement => {
     </Modal>
 }
 
+// const mapDispatchToProps = dispatch: AppDispatch => {
+//     return {
+//         doAuth: (email, password) => dispatch(auth(email, password))
+//     }
+// }
 export default LoginModal;

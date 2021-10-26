@@ -1,7 +1,7 @@
-import * as IData from "../interfaces/data";
+import * as IData from "../../interfaces/data";
 
 import { dump, IDump } from "./constants";
-import { mapToArray } from "../helpers";
+import { mapToArray } from "../../helpers";
 
 export default class Mocks {
     public users: Map<number, IData.IDataUser>;

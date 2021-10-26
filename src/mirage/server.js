@@ -1,6 +1,5 @@
 import { createServer, Model } from "miragejs"
-import Mocks from "../mocks/mocks";
-import { userSlice } from "./reducers/user";
+import Mocks from "./mocks/mocks";
 // import { monitorEventLoopDelay } from "perf_hooks";
 
 const userUids = {

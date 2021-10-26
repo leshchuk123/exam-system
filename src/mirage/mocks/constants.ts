@@ -1,4 +1,4 @@
-import * as IData from "../interfaces/data";
+import * as IData from "../../interfaces/data";
 export interface IDump {
     users?: IData.IDataUser[]
     modes?: IData.IDataMode[]
