@@ -1,0 +1,18 @@
+.navlink {
+    padding: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    background-color: #333;
+    color: #ddd;
+    text-decoration: none;
+
+    &:hover:not(.active) {
+        background-color: #222;
+        color: #fff;
+    }
+
+    &.active {
+        background-color: #000;
+    }
+}

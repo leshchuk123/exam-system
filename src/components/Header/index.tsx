@@ -12,10 +12,6 @@ const Header = () => {
                 Exams System
             </div>
         </div>
-        <div className="brand">
-            <Logo />
-            {/* <img src={logo} id="logo" alt="SOKOLOV EXAMS SYSTEM" /> */}
-        </div>
         <div className="menu">
             <Button text="Normal" />
             <Button icon="close" unhover />
