@@ -4,9 +4,9 @@
     @include noSelect;
 
     display: flex;
-    padding: 20px;
-    gap: 0 20px;
-    background-color: #ddd;
+    padding: 24px;
+    gap: 0 24px;
+    background-color: #eee;
     grid-column: 4 / span 9;
     grid-row: 1;
     margin-left: -24px;
@@ -24,7 +24,7 @@
 
     .title_text {
         font-size: 36px;
-        font-weight: 700;
+        font-weight: 100;
         text-transform: uppercase;
         line-height: 1;
     }

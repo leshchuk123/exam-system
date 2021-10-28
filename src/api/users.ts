@@ -1,3 +1,5 @@
+import { IDataTask, IDataUser } from "../interfaces/data";
+
 const defaults = {
     method: "GET",
     headers: {
@@ -5,19 +7,46 @@ const defaults = {
     },
 };
 
-export const auth = (email: string, password: string) => fetch("/api/users/auth", {
-    ...defaults,
-    method: "POST",
-    body: JSON.stringify({
-        email,
-        password
+export const users = {
+    auth: (email: string, password: string) => fetch("/api/users/auth", {
+        ...defaults,
+        method: "POST",
+        body: JSON.stringify({
+            email,
+            password
+        }),
     }),
-});
+    list: () => fetch("/api/users", {
+        ...defaults,
+    }),
+    get: (id: string | number) => fetch(`/api/users/${id}`, {
+        ...defaults,
+    }),
+    set: (data: IDataUser) => fetch(`/api/users/${data.id}`, {
+        ...defaults,
+        method: "POST",
+        body: JSON.stringify(data)
+    }),
+}
 
-export const users = () => fetch("/api/users", {
-    ...defaults,
-});
-
-export const user = (id: string | number) => fetch(`/api/users/${id}`, {
-    ...defaults,
-});
+interface ITasksOptions {
+    speciality?: number
+    grade?: number
+}
+export const tasks = {
+    list: (options: ITasksOptions = {}) => {
+        const { speciality, grade } = options;
+        return fetch(
+            `/api/tasks${speciality ? "/speciality/" + speciality : ""}${grade ? "/grade/" + grade : ""}`,
+            { ...defaults }
+        );
+    },
+    get: (id: string | number) => fetch(`/api/tasks/${id}`, {
+        ...defaults,
+    }),
+    set: (data: IDataTask) => fetch(`/api/tasks/${data.id}`, {
+        ...defaults,
+        method: "POST",
+        body: JSON.stringify(data)
+    }),
+}

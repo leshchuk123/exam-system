@@ -1,6 +1,6 @@
 import { USER } from "../constants/actions";
 import { IDataUser, IReducer } from "../interfaces/data";
-import * as users from "../api/users";
+import { users } from "../api/users";
 import { AppDispatch } from "../store";
 
 const initialState: IDataUser = {

@@ -13,6 +13,7 @@ import { RootState } from './store';
 import { connect } from 'react-redux';
 import Navigation from './components/Navigation';
 import Brand from './components/Brand';
+import Listing from './components/ui/Listing';
 
 interface IAppProps {
     userUid?: string
@@ -26,6 +27,7 @@ function App(props: IAppProps) {
             <Header />
             <Navigation />
             <LoginModal open={!userUid} />
+            <Listing />
         </div>
     );
 }
