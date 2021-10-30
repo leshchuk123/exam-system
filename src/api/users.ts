@@ -16,14 +16,17 @@ export const users = {
             password
         }),
     }),
-    list: (page = 1, options: IListOptions = {}) => fetch(`/api/users`, {
-        ...defaults,
-        method: "POST",
-        body: JSON.stringify({
-            page,
-            options,
-        }),
-    }),
+    list: (page = 1, pageSize = 20, options: IListOptions = {}) => {
+        return fetch(`/api/users`, {
+            ...defaults,
+            method: "POST",
+            body: JSON.stringify({
+                page,
+                pageSize,
+                options,
+            }),
+        })
+    },
     get: (id: string | number) => fetch(`/api/users/${id}`, {
         ...defaults,
     }),

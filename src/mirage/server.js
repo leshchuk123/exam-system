@@ -37,15 +37,15 @@ export function makeServer({ environment = 'test' }) {
             });
 
             this.post("/users", (schema, request) => {
-                const { page = 1, options = {} } = request.requestBody;
+                const { page = 1, options = {}, pageSize = 20 } = JSON.parse(request.requestBody);
                 const { sort = [], filters = [] } = options;
                 let users = schema.users.all();
                 users = filterCollection(users, filters);
                 users = sortCollection(users, sort);
                 const arr = collectionToArray(users);
                 const total = arr.length;
-                const data = slicePage(arr, page, 20);
-                return { page, total, data };
+                const data = slicePage(arr, page, pageSize);
+                return { page, total, pageSize, data };
             });
         },
     });

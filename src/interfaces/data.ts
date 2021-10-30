@@ -58,6 +58,7 @@ export interface IReducerAction<T> {
         data: T
         page: number
         total: number
+        pageSize: number
         error: string
     }
 }
@@ -73,6 +74,7 @@ export interface IReducerState<T> {
     data: T
     page?: number
     total?: number
+    pageSize?: number
     status: FETCH_STATE
     error: string
 }
