@@ -12,17 +12,18 @@ import { AppDispatch } from "../../store";
 import { connect } from "react-redux";
 
 export interface OwnProps {
-  open?: boolean
+    open?: boolean
+    error?: string
 }
 
 interface DispatchProps {
-  doAuth: (email: string, password: string) => void
+    doAuth: (email: string, password: string) => void
 }
  
 type Props =  DispatchProps & OwnProps;
 
 const LoginModal:FC<Props> = (props): JSX.Element => {
-    const { open, doAuth } = props;
+    const { open, error, doAuth } = props;
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -62,6 +63,7 @@ const LoginModal:FC<Props> = (props): JSX.Element => {
                 </form>
             </div>
         </div>
+        {error?.length && <div className="modal_error_message">{error}</div>}
         <div className="modal_footer">
             <Button 
                 text="Submit" 
@@ -73,9 +75,9 @@ const LoginModal:FC<Props> = (props): JSX.Element => {
     </Modal>
 }
 
-const mapDispatchToProps = (dispatch: AppDispatch) => {
+const mapDispatch = (dispatch: AppDispatch) => {
     return {
         doAuth: (email:string, password: string) => auth(email, password, dispatch),
     }
 }
-export default connect<null, DispatchProps, OwnProps>(null, mapDispatchToProps)(LoginModal);
+export default connect<null, DispatchProps, OwnProps>(null, mapDispatch)(LoginModal);

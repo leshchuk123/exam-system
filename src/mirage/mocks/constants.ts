@@ -1,10 +1,10 @@
 import * as IData from "../../interfaces/data";
 export interface IDump {
-    users?: IData.IDataUser[]
-    modes?: IData.IDataMode[]
-    specialities?: IData.IDataSpeciality[]
-    tasks?: IData.IDataTask[]
-    options?: IData.IDataOption[]
+    users: IData.IDataUser[]
+    modes: IData.IDataMode[]
+    specialities: IData.IDataSpeciality[]
+    tasks: IData.IDataTask[]
+    options: IData.IDataOption[]
     attempts?: IData.IDataAttempt[]
     answers?: IData.IDataAnswer[]
 }

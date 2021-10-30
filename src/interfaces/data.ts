@@ -1,11 +1,13 @@
+import { FETCH_STATE, SORT_DIR } from "../constants/data";
+
 export interface IDataUser {
-    id: number
-    userUid: string
-    firstName: string
-    lastName: string
-    speciality: number | IDataSpeciality
-    grade: number
-    hiringDate: Date | string | number | null
+    id?: number
+    userUid?: string
+    firstName?: string
+    lastName?: string
+    speciality?: number | IDataSpeciality
+    grade?: number
+    hiringDate?: Date | string | number | null
     accessDate?: Date | string | number | null
 }
 
@@ -52,12 +54,40 @@ export interface IDataAnswer {
 
 export interface IReducerAction<T> {
     type?: string
-    payload?: T
+    payload?: {
+        data: T
+        page: number
+        total: number
+        error: string
+    }
 }
 
 export interface IReducer<T> {
     (
-        state?: IDataUser, 
+        state?: IReducerState<T>, 
         action?: IReducerAction<T>
-    ): T
+    ): IReducerState<T>
+}
+
+export interface IReducerState<T> {
+    data: T
+    page?: number
+    total?: number
+    status: FETCH_STATE
+    error: string
+}
+
+export interface IListSortOption {
+    field: string
+    dir?: SORT_DIR
+}
+
+export interface IListFilterOption {
+    field: string
+    value: any
+}
+
+export interface IListOptions {
+    sort?: IListSortOption[]
+    filter?: IListFilterOption[]
 }

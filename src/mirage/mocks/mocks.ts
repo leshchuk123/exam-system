@@ -27,7 +27,7 @@ export default class Mocks {
         } = this.dump;
 
         this.users = new Map();
-        users?.forEach(entry => {this.users.set(entry.id, entry)});
+        users.forEach(entry => {this.users.set(Number(entry.id), entry)});
         this.modes = new Map();
         modes?.forEach(entry => {this.modes.set(entry.id, entry)});
         this.specialities = new Map();

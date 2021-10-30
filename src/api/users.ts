@@ -1,4 +1,4 @@
-import { IDataTask, IDataUser } from "../interfaces/data";
+import { IDataUser, IListOptions } from "../interfaces/data";
 
 const defaults = {
     method: "GET",
@@ -16,37 +16,29 @@ export const users = {
             password
         }),
     }),
-    list: () => fetch("/api/users", {
+    list: (page = 1, options: IListOptions = {}) => fetch(`/api/users`, {
         ...defaults,
+        method: "POST",
+        body: JSON.stringify({
+            page,
+            options,
+        }),
     }),
     get: (id: string | number) => fetch(`/api/users/${id}`, {
         ...defaults,
     }),
-    set: (data: IDataUser) => fetch(`/api/users/${data.id}`, {
+    add: (data: IDataUser) => fetch(`/api/users`, {
         ...defaults,
-        method: "POST",
+        method: "UPDATE",
         body: JSON.stringify(data)
     }),
-}
-
-interface ITasksOptions {
-    speciality?: number
-    grade?: number
-}
-export const tasks = {
-    list: (options: ITasksOptions = {}) => {
-        const { speciality, grade } = options;
-        return fetch(
-            `/api/tasks${speciality ? "/speciality/" + speciality : ""}${grade ? "/grade/" + grade : ""}`,
-            { ...defaults }
-        );
-    },
-    get: (id: string | number) => fetch(`/api/tasks/${id}`, {
+    update: (data: IDataUser) => fetch(`/api/users`, {
         ...defaults,
-    }),
-    set: (data: IDataTask) => fetch(`/api/tasks/${data.id}`, {
-        ...defaults,
-        method: "POST",
+        method: "PATCH",
         body: JSON.stringify(data)
     }),
-}
+    delete: (id: string | number) => fetch(`/api/users/${id}`, {
+        ...defaults,
+        method: "DELETE",
+    }),
+};

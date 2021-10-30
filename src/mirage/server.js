@@ -1,4 +1,6 @@
 import { createServer, Model } from "miragejs"
+import { SORT_DIR } from "../constants/data";
+import { collectionToArray, filterCollection, slicePage, sortCollection } from "./mocks/helpers";
 
 const userUids = {
     "andrey.leshchuk.123@gmail.com:17eb222afaec35f49fbc8eb4a45753ee": "a9c0a48e-8dc1-4bbe-aea0-d5973a118e9a",
@@ -32,7 +34,19 @@ export function makeServer({ environment = 'test' }) {
             this.get("/users/:id", (schema, request) => {
                 const { id } = request.params;
                 return schema.users.find(id);
-            })
+            });
+
+            this.post("/users", (schema, request) => {
+                const { page = 1, options = {} } = request.requestBody;
+                const { sort = [], filters = [] } = options;
+                let users = schema.users.all();
+                users = filterCollection(users, filters);
+                users = sortCollection(users, sort);
+                const arr = collectionToArray(users);
+                const total = arr.length;
+                const data = slicePage(arr, page, 20);
+                return { page, total, data };
+            });
         },
     });
 }
