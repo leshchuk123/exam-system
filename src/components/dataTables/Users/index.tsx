@@ -5,7 +5,7 @@ import Table from "../DataTable";
 import { PaginatorPageState } from 'primereact/paginator';
 
 import { fetchUsers } from "../../../reducers/users";
-import { IListOptions } from "../../../interfaces/data";
+import { IDataUser, IListOptions } from "../../../interfaces/data";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error } = state.users;
@@ -33,16 +33,19 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
         fetchUsers(Number(page + 1), Number(rows), {})
     }
 
+    const userNameTemplate = (rowData: IDataUser): string => {
+        return `${rowData.lastName} ${rowData.firstName}`;
+    }
+    const dateFormater = (str?: string) => str && str.length ? new Date(str).toLocaleDateString() : "";
+
     return <Table
         records={data}
         columns={[
-            {field: "userUid", header: "UID"},
-            {field: "firstName", header: "Имя"},
-            {field: "lastName", header: "Фамилия"},
+            {header: "Имя", body: userNameTemplate},
             {field: "speciality", header: "Специальность"},
             {field: "grade", header: "Грейд"},
-            {field: "hiringDate", header: "Дата найма"},
-            {field: "accessDate", header: "Последняя активность"},
+            {header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate)},
+            {header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate)},
         ]}
         total={total}
         pageSize={pageSize}

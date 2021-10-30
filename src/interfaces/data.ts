@@ -7,8 +7,8 @@ export interface IDataUser {
     lastName?: string
     speciality?: number | IDataSpeciality
     grade?: number
-    hiringDate?: Date | string | number | null
-    accessDate?: Date | string | number | null
+    hiringDate?: string
+    accessDate?: string
 }
 
 export interface IDataSpeciality {

@@ -8,7 +8,11 @@ import "./datatable.scss";
 
 interface IProps {
     records: object[]
-    columns: { field: string, header: string }[]
+    columns: {
+        header: string,
+        field?: string,
+        body?: (rowData: object) => string
+    }[]
     total?: number
     pageSize?: number
     page?: number
