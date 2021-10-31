@@ -47,6 +47,18 @@ export function makeServer({ environment = 'test' }) {
                 const data = slicePage(arr, page, pageSize);
                 return { page, total, pageSize, data, sort, filter };
             });
+
+            this.post("/tasks", (schema, request) => {
+                const { page = 1, options = {}, pageSize = 20 } = JSON.parse(request.requestBody);
+                const { sort = null, filter = [] } = options;
+                let tasks = schema.tasks.all();
+                // users = filterCollection(users, filter);
+                let arr = collectionToArray(tasks);
+                if (sort) arr = sortCollection(arr, sort);
+                const total = arr.length;
+                const data = slicePage(arr, page, pageSize);
+                return { page, total, pageSize, data, sort, filter };
+            });
         },
     });
 }

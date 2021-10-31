@@ -44,3 +44,5 @@ export const mapToArray = function<T>(map: Map<number, T> = new Map()): T[] {
 export const errToStr = (error: Error | string) => {
     return error instanceof Error ? error.message : error;
 }
+
+export const dateFormater = (str?: string) => str && str.length ? new Date(str).toLocaleDateString() : "";

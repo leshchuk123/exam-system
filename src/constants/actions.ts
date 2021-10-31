@@ -13,3 +13,11 @@ export enum USERS {
     DELETE = "users_delete",
     CLEAR = "users_clear",
 }
+export enum TASKS {
+    FETCH_START = "tasks_fetch_start",
+    FETCH_ERROR = "tasks_fetch_error",
+    SET = "tasks_set",
+    UPDATE = "tasks_update",
+    DELETE = "tasks_delete",
+    CLEAR = "tasks_clear",
+}

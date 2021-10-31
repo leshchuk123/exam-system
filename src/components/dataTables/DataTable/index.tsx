@@ -55,14 +55,14 @@ const Table: FC<IProps> = (props): JSX.Element => {
         >
             {columns.map(col => <Column key={uuidv4()} {...col}></Column>)}
         </DataTable>
-        <Paginator
+        {records.length > 0 && <Paginator
             rows={pageSize}
             totalRecords={total}
             rowsPerPageOptions={[5, 10, 20, 50]}
             first={pageSize * (page - 1)}
             currentPageReportTemplate="(Страница {currentPage} из {totalPages})"
             onPageChange={onPageChange}
-        />
+        />}
     </div>
 }
 

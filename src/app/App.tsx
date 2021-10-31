@@ -17,6 +17,7 @@ import Brand from '../components/Brand';
 import { FETCH_STATE } from '../constants/data';
 
 import UsersTable from "../components/dataTables/Users";
+import TasksTable from "../components/dataTables/Tasks";
 
 const mapState = (state: RootState) => {
     const { data, status, error } = state.user;
@@ -38,6 +39,7 @@ const App: FC<PropsFromRedux> = (props): JSX.Element => {
             <Switch>
                 <Route path="/" exact component={UsersTable} />
                 <Route path="/users" component={UsersTable} />
+                <Route path="/tasks" component={TasksTable} />
             </Switch>
         </div>
     );
