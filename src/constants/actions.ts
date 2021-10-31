@@ -11,4 +11,5 @@ export enum USERS {
     SET = "users_set",
     UPDATE = "users_update",
     DELETE = "users_delete",
+    CLEAR = "users_clear",
 }

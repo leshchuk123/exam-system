@@ -1,4 +1,4 @@
-import { IDataUser, IListOptions } from "../interfaces/data";
+import { IDataUser, IListOptions } from "../../interfaces/data";
 
 const defaults = {
     method: "GET",
@@ -16,7 +16,7 @@ export const users = {
             password
         }),
     }),
-    list: (page = 1, pageSize = 20, options: IListOptions = {}) => {
+    list: (page:number, pageSize:number, options:IListOptions) => {
         return fetch(`/api/users`, {
             ...defaults,
             method: "POST",

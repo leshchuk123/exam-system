@@ -1,10 +1,8 @@
 import { USER } from "../constants/actions";
-import { IDataUser, IReducer, IReducerState } from "../interfaces/data";
-import { users } from "../api/users";
-import { AppDispatch } from "../store";
+import { IUserState, IUserReducer } from "../interfaces/data";
 import { FETCH_STATE } from "../constants/data";
 
-const initialState: IReducerState<IDataUser> = {
+const initialState: IUserState = {
     data: {
         id: 0,
         firstName: "",
@@ -19,32 +17,17 @@ const initialState: IReducerState<IDataUser> = {
     error: ""
 };
 
-export const auth = (email: string, password: string, dispatch: AppDispatch) => {
-    dispatch({ type: USER.FETCH_START });
-
-    users.auth(email, password)
-        .then(response => {
-            if (response.status === 200 || response.status === 201) return response.json();
-            else return null;
-        })
-        .then((json: { users: IDataUser }) => {
-            dispatch({ type: USER.SET, payload: { data: json.users } });
-        })
-        .catch(error => {
-            dispatch({ type: USER.FETCH_ERROR, payload: { error: error } })
-        });
-}
-
-const userReducer: IReducer<IDataUser> = (state = initialState, action = {}): IReducerState<IDataUser> => {
-    const { type, payload = { error: "", data: {}} } = action;
-
+const userReducer: IUserReducer = (state = initialState, action = null) => {
+    const { type, payload } = action || {};
+    const { error = "", data = state.data } = payload || {};
+    
     switch (type) {
         case USER.FETCH_START:
-            return { ...state, data: {}, status: FETCH_STATE.LOADING };
+            return { ...state, data: initialState.data, status: FETCH_STATE.LOADING };
         case USER.FETCH_ERROR:
-            return { ...state, error: payload.error, status: FETCH_STATE.LOADED };
+            return { ...state, error, status: FETCH_STATE.LOADED };
         case USER.SET:
-            return { ...state, data: payload.data, status: FETCH_STATE.LOADED };
+            return { ...state, data, status: FETCH_STATE.LOADED };
         default:
             return state;
     }

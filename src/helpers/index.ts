@@ -40,3 +40,7 @@ export const mapToArray = function<T>(map: Map<number, T> = new Map()): T[] {
     map.forEach(entry => arr.push(entry));
     return arr;
 }
+
+export const errToStr = (error: Error | string) => {
+    return error instanceof Error ? error.message : error;
+}

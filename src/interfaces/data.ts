@@ -1,3 +1,4 @@
+import { DataTableFilterParams, DataTableSortParams } from 'primereact/datatable';
 import { FETCH_STATE, SORT_DIR } from "../constants/data";
 
 export interface IDataUser {
@@ -10,12 +11,10 @@ export interface IDataUser {
     hiringDate?: string
     accessDate?: string
 }
-
 export interface IDataSpeciality {
     id: number
     name: string
 }
-
 export interface IDataTask {
     id: number
     text: string
@@ -23,12 +22,10 @@ export interface IDataTask {
     grade: number
     mode: number | IDataMode
 }
-
 export interface IDataMode {
     id: number
     name: string
 }
-
 export interface IDataAttempt {
     id: number
     user: number | IDataUser
@@ -36,7 +33,6 @@ export interface IDataAttempt {
     examDate: Date | string | number
     result: number
 }
-
 export interface IDataOption {
     id: number
     task: number | IDataTask
@@ -44,7 +40,6 @@ export interface IDataOption {
     regEx?: string | RegExp
     correct?: boolean
 }
-
 export interface IDataAnswer {
     id: number
     attempt: number | IDataAttempt
@@ -52,44 +47,63 @@ export interface IDataAnswer {
     option: number | IDataOption
 }
 
-export interface IReducerAction<T> {
-    type?: string
-    payload?: {
-        data: T
-        page: number
-        total: number
-        pageSize: number
-        error: string
-    }
-}
-
-export interface IReducer<T> {
+export interface IUserReducer {
     (
-        state?: IReducerState<T>, 
-        action?: IReducerAction<T>
-    ): IReducerState<T>
+        state?: IUserState, 
+        action?: IUserAction | null | undefined
+    ): IUserState
 }
-
-export interface IReducerState<T> {
-    data: T
-    page?: number
-    total?: number
-    pageSize?: number
+export interface IUserState {
+    data: IDataUser
     status: FETCH_STATE
     error: string
 }
-
-export interface IListSortOption {
-    field: string
-    dir?: SORT_DIR
+export interface IUserAction {
+    type: string
+    payload?: {
+        data?: IDataUser 
+        error?: string 
+    }
 }
 
-export interface IListFilterOption {
-    field: string
-    value: any
+export interface IDataTableReducer<T> {
+    (
+        state?: IDataTableState<T>, 
+        action?: IDataTableAction<T>| null | undefined
+    ): IDataTableState<T>
+}
+export interface IDataTableState<T> {
+    data: T[]
+    page: number
+    total: number
+    pageSize: number
+    sort: DataTableSortParams | null
+    filter: DataTableFilterParams | null
+    status: FETCH_STATE
+    error: string
+}
+export interface IDataTableAction<T> {
+    type: string
+    payload: {
+        data: T[]
+        page: number
+        total: number
+        pageSize: number
+        sort: DataTableSortParams | null
+        filter: DataTableFilterParams | null
+        error: string
+    }
+}
+export interface IDataTableAPIResponse<T> {
+    data: T[],
+    page: number,
+    total: number,
+    pageSize: number,
+    sort: DataTableSortParams | null
+    filter: DataTableFilterParams | null
 }
 
 export interface IListOptions {
-    sort?: IListSortOption[]
-    filter?: IListFilterOption[]
+    sort?: DataTableSortParams | null
+    filter?: DataTableFilterParams | null
 }

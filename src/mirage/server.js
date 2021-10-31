@@ -38,14 +38,14 @@ export function makeServer({ environment = 'test' }) {
 
             this.post("/users", (schema, request) => {
                 const { page = 1, options = {}, pageSize = 20 } = JSON.parse(request.requestBody);
-                const { sort = [], filters = [] } = options;
+                const { sort = null, filter = [] } = options;
                 let users = schema.users.all();
-                users = filterCollection(users, filters);
-                users = sortCollection(users, sort);
-                const arr = collectionToArray(users);
+                // users = filterCollection(users, filter);
+                let arr = collectionToArray(users);
+                if (sort) arr = sortCollection(arr, sort);
                 const total = arr.length;
                 const data = slicePage(arr, page, pageSize);
-                return { page, total, pageSize, data };
+                return { page, total, pageSize, data, sort, filter };
             });
         },
     });
