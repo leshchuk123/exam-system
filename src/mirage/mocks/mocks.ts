@@ -27,19 +27,19 @@ export default class Mocks {
         } = this.dump;
 
         this.users = new Map();
-        users.forEach(entry => {this.users.set(Number(entry.id), entry)});
+        users.forEach(entry => {this.users.set(Number(Number(entry.id)), entry)});
         this.modes = new Map();
-        modes?.forEach(entry => {this.modes.set(entry.id, entry)});
+        modes?.forEach(entry => {this.modes.set(Number(entry.id), entry)});
         this.specialities = new Map();
-        specialities?.forEach(entry => {this.specialities.set(entry.id, entry)});
+        specialities?.forEach(entry => {this.specialities.set(Number(entry.id), entry)});
         this.tasks = new Map();
-        tasks?.forEach(entry => {this.tasks.set(entry.id, entry)});
+        tasks?.forEach(entry => {this.tasks.set(Number(entry.id), entry)});
         this.options = new Map();
-        options?.forEach(entry => {this.options.set(entry.id, entry)});
+        options?.forEach(entry => {this.options.set(Number(entry.id), entry)});
         this.attempts = new Map();
-        attempts?.forEach(entry => {this.attempts.set(entry.id, entry)});
+        attempts?.forEach(entry => {this.attempts.set(Number(entry.id), entry)});
         this.answers = new Map();
-        answers?.forEach(entry => {this.answers.set(entry.id, entry)});
+        answers?.forEach(entry => {this.answers.set(Number(entry.id), entry)});
     }
 
     private loadDump() {

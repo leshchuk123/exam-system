@@ -9,6 +9,7 @@ import { IListOptions } from "../../../interfaces/data";
 import { FETCH_STATE } from "../../../constants/data";
 import { TASKS } from "../../../constants/actions";
 import { fetchTasks } from "../../../reducers/actions/tasks";
+import { modeTemplate, specialityTemplate } from "../fieldsTemplates";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.tasks;
@@ -56,18 +57,16 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
         fetch(Number(page + 1), Number(rows), {sort, filter})
     }
     const onSort = (sort: DataTableSortParams) => {
-        debugger
         fetch(Number(page), Number(pageSize), {sort, filter})
     }
 
-    console.log({data})
     return <Table
         records={data}
         columns={[
             {field: "text", header: "Текст задания"},
-            {field: "speciality", header: "Специальность", sortable: true},
+            {field: "speciality", header: "Специальность", body: specialityTemplate, sortable: true},
             {field: "grade", header: "Грейд", sortable: true},
-            {field: "mode", header: "Режим ответа", sortable: true},
+            {field: "mode", header: "Режим ответа", body: modeTemplate, sortable: true},
         ]}
         total={total}
         pageSize={pageSize}

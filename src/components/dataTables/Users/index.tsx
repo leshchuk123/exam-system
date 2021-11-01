@@ -6,10 +6,11 @@ import { PaginatorPageState } from 'primereact/paginator';
 import { DataTableSortParams, DataTableFilterParams, DataTableFilterMeta, DataTableFilterMetaData } from 'primereact/datatable';
 
 import { fetchUsers } from "../../../reducers/actions/users";
-import { IDataUser, IListOptions } from "../../../interfaces/data";
+import { IDataSpeciality, IDataUser, IListOptions } from "../../../interfaces/data";
 import { FETCH_STATE } from "../../../constants/data";
 import { USERS } from "../../../constants/actions";
 import { dateFormater } from "../../../helpers";
+import { specialityTemplate, userNameTemplate } from "../fieldsTemplates";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.users;
@@ -57,19 +58,14 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
         fetchUsers(Number(page + 1), Number(rows), {sort, filter})
     }
     const onSort = (sort: DataTableSortParams) => {
-        debugger
         fetchUsers(Number(page), Number(pageSize), {sort, filter})
-    }
-    
-    const userNameTemplate = (rowData: IDataUser): string => {
-        return `${rowData.lastName} ${rowData.firstName}`;
     }
 
     return <Table
         records={data}
         columns={[
             {field: "lastName&firstName", header: "Имя", body: userNameTemplate, sortable: true},
-            {field: "speciality", header: "Специальность", sortable: true},
+            {field: "speciality", header: "Специальность", body: specialityTemplate, sortable: true},
             {field: "grade", header: "Грейд", sortable: true},
             {field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true},
             {field: "accessDate", header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate), sortable: true},

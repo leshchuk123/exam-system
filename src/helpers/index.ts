@@ -46,3 +46,10 @@ export const errToStr = (error: Error | string) => {
 }
 
 export const dateFormater = (str?: string) => str && str.length ? new Date(str).toLocaleDateString() : "";
+
+export const plural = (str: string) => {
+    let match;
+    if ((match = str.match(/^(.+)y$/))) return `${match[1]}ies`;
+    if ((match = str.match(/^(.+)([cs])$/))) return `${match[1]}${match[2]}es`;
+    return `${str}s`;
+}

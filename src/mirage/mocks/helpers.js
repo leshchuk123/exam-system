@@ -1,14 +1,16 @@
-export const collectionToArray = (coll)  => {
+import { plural } from "../../helpers";
+
+export const collectionToArray = (coll) => {
     const arr = [];
     coll.models.forEach(m => arr.push(m.attrs));
     return arr;
 }
-export const filterCollection = (coll, filter = []) => {
+export const filterCollection = (arrColl, filter = []) => {
     filter.forEach((flt) => {
         const { field, value } = flt;
-        coll = coll.filter(v => v[field] === value);
+        arrColl = arrColl.filter(v => v[field] === value);
     });
-    return coll;
+    return arrColl;
 }
 export const sortCollection = (arrColl, sort = {}) => {
     const { sortField, sortOrder = 1 } = sort;
@@ -31,4 +33,28 @@ export const sortCollection = (arrColl, sort = {}) => {
 }
 export const slicePage = (arr = [], page = 1, pageSize = 10) => {
     return arr.slice(pageSize * (page - 1), pageSize * page);
+}
+export const processAssociations = (arr, schema) => {
+    const cache = new Map();
+    arr.forEach(rec => {
+        Object.keys(rec).forEach(fld => {
+            const coll = schema[plural(fld)];
+            const val = rec[fld];
+            if (coll) {
+                if (!cache.has(fld)) cache.set(fld, new Map());
+                if (!cache.get(fld).has(val)) cache.get(fld).set(val, coll.findBy({ id: val }));
+                rec[fld] = cache.get(fld).get(val).attrs;
+            }
+        });
+    });
+}
+export const process = (collection, requestBody, schema) => {
+    const { page = 1, options = {}, pageSize = 20 } = JSON.parse(requestBody);
+    const { sort = null, filter = [] } = options;
+    let arr = collectionToArray(collection);
+    if (sort) arr = sortCollection(arr, sort);
+    processAssociations(arr, schema);
+    const total = arr.length;
+    const data = slicePage(arr, page, pageSize);
+    return { page, total, pageSize, data, sort, filter };
 }
