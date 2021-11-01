@@ -1,27 +1,18 @@
 import React, { FC } from "react";
 import { DataTable, DataTableFilterParams, DataTableSortParams } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import { Column, ColumnProps } from 'primereact/column';
 import { Paginator, PaginatorPageState } from 'primereact/paginator';
 import { v4 as uuidv4 } from "uuid";
 
 import "./datatable.scss";
+import { IDataAny } from "../../../interfaces/data";
 
-export enum SORT_ORDER {
-    ASC = 1,
-    DESC = -1,
-}
-export interface ISortData {
-    sortField: string
-    sortOrder: SORT_ORDER
+interface IDataTableColumnProps extends ColumnProps {
+    body?: (rowData: IDataAny) => string
 }
 interface IProps {
     records: object[]
-    columns: {
-        header: string,
-        field?: string,
-        body?: (rowData: object) => string
-        sortable?: boolean
-    }[]
+    columns: IDataTableColumnProps[]
     total?: number
     pageSize?: number
     page?: number
