@@ -1,19 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { FC, lazy, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Route, Switch } from "react-router";
-import { compose } from "recompose";
-
-import { withRouter } from "react-router-dom";
+import { connect, ConnectedProps } from 'react-redux';
 
 import './app.scss';
 
 import Header from "../components/Header";
 import LoginModal from "../components/LoginModal";
-
-import { RootState } from '../store';
-import { connect, ConnectedProps } from 'react-redux';
 import Navigation from '../components/Navigation';
 import Brand from '../components/Brand';
+
+import { RootState } from '../store';
 import { FETCH_STATE } from '../constants/data';
 
 import UsersTable from "../components/dataTables/Users";

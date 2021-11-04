@@ -1,4 +1,3 @@
-import { USER } from "../constants/actions";
 import { IUserState, IUserReducer } from "../interfaces/data";
 import { FETCH_STATE } from "../constants/data";
 
@@ -22,12 +21,14 @@ const userReducer: IUserReducer = (state = initialState, action = null) => {
     const { error = "", data = state.data } = payload || {};
     
     switch (type) {
-        case USER.FETCH_START:
+        case "user_state_start":
             return { ...state, data: initialState.data, status: FETCH_STATE.LOADING };
-        case USER.FETCH_ERROR:
+        case "user_fetch_error":
             return { ...state, error, status: FETCH_STATE.LOADED };
-        case USER.SET:
+        case "user_set":
             return { ...state, data, status: FETCH_STATE.LOADED };
+        case "user_signout":
+            return { ...initialState };
         default:
             return state;
     }

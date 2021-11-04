@@ -1,16 +1,15 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import Table from "../DataTable";
 import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableSortParams, DataTableFilterParams, DataTableFilterMeta, DataTableFilterMetaData } from 'primereact/datatable';
+import { DataTableSortParams } from 'primereact/datatable';
 
-import { fetchUsers } from "../../../reducers/actions/users";
-import { IDataSpeciality, IDataUser, IListOptions } from "../../../interfaces/data";
+import { fetchTableData } from "../../../reducers/actions/table";
+import { IDataUser, IListOptions } from "../../../interfaces/data";
 import { FETCH_STATE } from "../../../constants/data";
-import { USERS } from "../../../constants/actions";
 import { dateFormater } from "../../../helpers";
-import { specialityTemplate, userNameTemplate } from "../fieldsTemplates";
+import { rolesTemplate, specialityTemplate, userNameTemplate } from "../fieldsTemplates";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.users;
@@ -19,8 +18,8 @@ const mapState = (state: RootState) => {
 }
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
-        fetchUsers: (page:number, pageSize:number, options:IListOptions) => fetchUsers(page, pageSize, options, dispatch),
-        clearData: () => dispatch({ type: USERS.CLEAR }),
+        fetchUsers: (page:number, pageSize:number, options:IListOptions) => fetchTableData("users", page, pageSize, options, dispatch),
+        clearData: () => dispatch({ type: "users_clear" }),
     }
 }
 const connector = connect(mapState, mapDispatch);
@@ -44,7 +43,9 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (userUid) fetchUsers(Number(page), Number(pageSize), {sort, filter});
+        if (userUid) {
+            fetchUsers(Number(page), Number(pageSize), { sort, filter });
+        }
         else clearData();
     }, [userUid]);
 
@@ -64,11 +65,12 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     return <Table
         records={data}
         columns={[
-            {field: "lastName&firstName", header: "Имя", body: userNameTemplate, sortable: true},
+            {field: "lastName", header: "Имя", body: userNameTemplate, sortable: true},
             {field: "speciality", header: "Специальность", body: specialityTemplate, sortable: true},
             {field: "grade", header: "Грейд", sortable: true},
             {field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true},
             {field: "accessDate", header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate), sortable: true},
+            {field: "roles", header: "Группы", body: rolesTemplate, sortable: true},
         ]}
         total={total}
         pageSize={pageSize}

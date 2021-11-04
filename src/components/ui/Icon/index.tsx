@@ -20,6 +20,7 @@ export interface IIcon extends IUIComponent {
     name: string
     size?: ICON_SIZE
     color?: string
+    pi?: boolean
 }
 
 const Icon: FC<IIcon> = (props): ReactElement => {
@@ -29,19 +30,25 @@ const Icon: FC<IIcon> = (props): ReactElement => {
         className = "",
         style = {},
         color = "",
+        pi = true,
     } = props;
 
-    const [ icon, setIcon ] = useState();
-    import(`../../../assets/icons/${name}.svg`).then((result) => {
-        setIcon(result.default)
-    })
+    const [icon, setIcon] = useState<string>();
     
     const cls = ["icon", size, color, ...className.split(/\s+/g)];
     if (color) style = { ...style, color}
 
-    return <div className={ clearJoin( ...cls ) } style={style}>
-        {icon && <img src={icon} alt={`Icon ${name}`} />}
-    </div>
+    if (pi) {
+        return <i className={`pi pi-${name} ${size} ${color} ${className}`} style={style}></i>
+    }else{
+        import(`../../../assets/icons/${name}.svg`).then((result) => {
+            setIcon(result.default)
+        })
+        
+        return <div className={ clearJoin( ...cls ) } style={style}>
+            {icon && <img src={icon} alt={`Icon ${name}`} />}
+        </div>
+    }
 }
 
 export default Icon;

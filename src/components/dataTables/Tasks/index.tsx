@@ -1,14 +1,14 @@
 import { FC, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import Table from "../DataTable";
 import { PaginatorPageState } from 'primereact/paginator';
 import { DataTableSortParams } from 'primereact/datatable';
 
+import Table from "../DataTable";
+
 import { IListOptions } from "../../../interfaces/data";
 import { FETCH_STATE } from "../../../constants/data";
-import { TASKS } from "../../../constants/actions";
-import { fetchTasks } from "../../../reducers/actions/tasks";
+import { fetchTableData } from "../../../reducers/actions/table";
 import { modeTemplate, specialityTemplate } from "../fieldsTemplates";
 
 const mapState = (state: RootState) => {
@@ -18,8 +18,8 @@ const mapState = (state: RootState) => {
 }
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
-        fetch: (page:number, pageSize:number, options:IListOptions) => fetchTasks(page, pageSize, options, dispatch),
-        clearData: () => dispatch({ type: TASKS.CLEAR }),
+        fetch: (page:number, pageSize:number, options:IListOptions) => fetchTableData("tasks", page, pageSize, options, dispatch),
+        clearData: () => dispatch({ type: "tasks_clear" }),
     }
 }
 const connector = connect(mapState, mapDispatch);
@@ -43,7 +43,7 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (userUid) fetch(Number(page), Number(pageSize), {sort, filter});
+        if (userUid) fetch(Number(page), Number(pageSize), { sort, filter });
         else clearData();
     }, [userUid]);
 

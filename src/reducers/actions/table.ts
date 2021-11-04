@@ -1,13 +1,18 @@
-import { TASKS } from "../../constants/actions";
 import { IListOptions, IDataTableAPIResponse, IDataTask } from "../../interfaces/data";
 import { AppDispatch } from "../../store";
 import { errToStr } from "../../helpers";
-import { tasks } from "../api/tasks";
+import { list } from "../api/table";
 
-export const fetchTasks = (page:number, pageSize:number, options:IListOptions, dispatch:AppDispatch) => {
-    dispatch({ type: TASKS.FETCH_START });
+export const fetchTableData = function <T>(
+    table: string,
+    page: number,
+    pageSize: number,
+    options: IListOptions,
+    dispatch: AppDispatch
+) {
+    dispatch({ type: `${table}_fetch_start` });
 
-    tasks.list(page, pageSize, options)
+    list(table, page, pageSize, options)
         .then(response => {
             if (response.status === 200 || response.status === 201) return response.json();
             else return null;
@@ -15,13 +20,13 @@ export const fetchTasks = (page:number, pageSize:number, options:IListOptions, d
         .then((json) => {
             const { page, total, pageSize, data, sort, filter } = json as IDataTableAPIResponse<IDataTask>;
             dispatch({
-                type: TASKS.SET,
+                type: `${table}_set`,
                 payload: { data, page, pageSize, total, sort, filter }
             });
         })
         .catch(error => {
             dispatch({
-                type: TASKS.FETCH_ERROR,
+                type: `${table}_fetch_error`,
                 payload: { error: errToStr(error) }
             })
         });

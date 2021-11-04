@@ -1,4 +1,3 @@
-import { TASKS } from "../constants/actions";
 import { IDataTableReducer, IDataTableState, IDataTask } from "../interfaces/data";
 import { FETCH_STATE } from "../constants/data";
 
@@ -26,13 +25,13 @@ const usersReducer: IDataTableReducer<IDataTask> = (state = initialState, action
         error = "",
     } = payload || {};
     switch (type) {
-        case TASKS.CLEAR:
+        case "tasks_clear":
             return { ...state, data: [], status: FETCH_STATE.NONE };
-        case TASKS.FETCH_START:
+        case "tasks_fetch_start":
             return { ...state, data: [], error: "", status: FETCH_STATE.LOADING };
-        case TASKS.FETCH_ERROR:
+        case "tasks_fetch_error":
             return { ...state, data: [], page: 1, total: 0, error, status: FETCH_STATE.LOADED };
-        case TASKS.SET:
+        case "tasks_set":
             return { ...state, data, page, total, pageSize, sort, filter, status: FETCH_STATE.LOADED };
         default:
             return state;

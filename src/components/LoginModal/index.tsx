@@ -7,7 +7,7 @@ import EmailInput from "../ui/inputs/EmailInput";
 import PasswordInput from "../ui/inputs/PasswordInput";
 import { IValidator } from "../ui/inputs/TextInput";
 
-import { auth } from "../../reducers/actions/users";
+import { auth } from "../../reducers/actions/auth";
 import { AppDispatch } from "../../store";
 import { connect } from "react-redux";
 

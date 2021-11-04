@@ -1,4 +1,19 @@
+import { Objectish } from "@reduxjs/toolkit/node_modules/immer/dist/internal";
 import { KeyboardEvent } from "react";
+
+const letters: { [key: string]: string } = {
+    "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "yo",
+    "ж": "zh", "з": "z", "и": "i", "й": "y", "к": "k", "л": "l", "м": "m",
+    "н": "n", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u",
+    "ф": "f", "х": "kh", "ц": "ts", "ч": "ch", "ш": "sh", "щ": "shch",
+    "ъ": "", "ы": "y", "ь": "", "э": "e", "ю": "yu", "я": "ya",
+};
+export const translit = (str: string) => str.split("").map(ch => {
+    if (!/[а-я]/i.test(ch)) return ch;
+    let ch2 = letters[ch.toLowerCase()];
+    if (/[А-Я]/.test(ch)) ch2 = ch2.substr(0, 1).toUpperCase() + ch.substr(1);
+    return ch2;
+}).join("");
 
 // объединение в строку аргументов непустых строк
 export const clearJoin = ( ...arr: string[] ): string => arr.filter(v => !!v).join(" ");
@@ -16,6 +31,12 @@ export const rndArrItem = function<T>(arr: T[]): T {
     return arr[rnd(0, arr.length - 1)];
 }
 
+export const pad = (v: number, length = 2) => {
+    let res = String(v);
+    while (res.length < length) res = "0" + res;
+    return res;
+}
+
 // получение массива размерности (to - from + 1), заполненного числами от from до to
 // или значениями value (если value - функция, то результатом ее выполнения)
 export const range = (from = 1, to = 10, value: any = undefined): any[] => {
@@ -29,7 +50,11 @@ export const range = (from = 1, to = 10, value: any = undefined): any[] => {
 }
 
 // итеративный вызов times раз функции callback с первым аргументом - счетчиком i и аргументами args
-export const iterate = (callback: (i: number, ...args: any[]) => any, times: number = 1, ...args: any[]): void => {
+export const iterate = (
+    callback: (i: number, ...args: any[]) => any,
+    times: number = 1,
+    ...args: any[]
+): void => {
     for (let i = 0; i < times; i++) {
         callback(i, ...args);
     }
