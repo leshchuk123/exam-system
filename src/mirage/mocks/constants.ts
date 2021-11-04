@@ -32,7 +32,7 @@ export const users: IData.IDataUser[] = [
         lastName: "Лещук",
         email: "leshchuk@front.ru",
         speciality: 1,
-        grade: 14,
+        grade: 16,
         hiringDate: "2020-12-22T21:00:00.000Z",
         accessDate: "",
         roles: 3,

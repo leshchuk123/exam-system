@@ -1,4 +1,4 @@
-import { Objectish } from "@reduxjs/toolkit/node_modules/immer/dist/internal";
+import { AnyArray, AnyMap, AnyObject, AnySet, Objectish } from "@reduxjs/toolkit/node_modules/immer/dist/internal";
 import { KeyboardEvent } from "react";
 
 const letters: { [key: string]: string } = {
@@ -78,3 +78,44 @@ export const plural = (str: string) => {
     if ((match = str.match(/^(.+)([cs])$/))) return `${match[1]}${match[2]}es`;
     return `${str}s`;
 }
+
+export const comparator = (v1: any, v2: any, strict = true): boolean => {
+    if (v1 === undefined || v1 === null) return v1 === v2;
+    if (v2 === undefined || v2 === null) return v1 === v2;
+    const type1 = typeof v1;
+    const type2 = typeof v2;
+    if (type1 !== type2) return false;
+    if (type1 !== "object" || strict === true) return v1 === v2;
+    if (v1 instanceof Array) return v1.length === v2.length
+        && v1.filter((v, i) => !comparator(v, v2[i], strict)).length > 0;
+    if (v1 instanceof Map) {
+        if (v1.size !== (v2 as Map<any, any>).size) return false;
+        let res = true;
+        (v1 as Map<any, any>).forEach(
+            (val, key) => {
+                res = res && comparator((v2 as Map<any, any>).get(key), val, strict);
+            }
+        );
+        return res;
+    }
+    if (v1 instanceof Set) {
+        if (v1.size !== (v2 as Set<any>).size) return false;
+        let res = true;
+        (v1 as Set<any>).forEach(
+            (val) => {
+                res = res && (v2 as Set<any>).has(val);
+            }
+        );
+        return res;
+    }
+    if (v1 instanceof Object) {
+        const keys1 = Object.keys(v1);
+        const keys2 = Object.keys(v2 as Object);
+        if (keys1.length !== keys2.length) return false;
+        let res = true;
+        keys1.forEach(key => {
+            res = res && comparator(v1[key], v2[key], strict);
+        })
+    }
+    return false;
+};

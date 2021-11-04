@@ -4,7 +4,8 @@ export const userNameTemplate = (record: IDataUser): string => {
     return `${record.firstName} ${record.lastName}`;
 }
 export const specialityTemplate = (record: IDataUser | IDataTask) => {
-    return (record.speciality as IDataSpeciality).name;
+    const { id, name } = record.speciality as IDataSpeciality;
+    return id === 0 ? "" : name;
 }
 export const modeTemplate = (record: IDataTask) => {
     return (record.mode as IDataMode).name;

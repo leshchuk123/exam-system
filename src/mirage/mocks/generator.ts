@@ -94,7 +94,5 @@ export const generateDump = () => {
         tasks,
         options,
     }
-    localStorage.setItem("exams_dump", JSON.stringify(dump));
-    localStorage.setItem("exams_uids", JSON.stringify(uids));
     return {dump, uids};
 }

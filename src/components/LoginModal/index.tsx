@@ -23,13 +23,17 @@ interface DispatchProps {
 type Props =  DispatchProps & OwnProps;
 
 const LoginModal:FC<Props> = (props): JSX.Element => {
-    const { open, error, doAuth } = props;
+    const {
+        open = false,
+        error = "",
+        doAuth
+    } = props;
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [valid, setValid] = useState<boolean>(false);
 
-    const submit = async () => {
+    const doSubmit = () => {
         if (valid) {
             const md5 = require('md5');
             doAuth(email, md5(password));
@@ -45,7 +49,7 @@ const LoginModal:FC<Props> = (props): JSX.Element => {
         setValid(!!email && !!password)
     }, [ email, password ]);
 
-    return <Modal open={open} closable={false}>
+    return <Modal open={open} closable={false} style={{width: 600, height: 400}}>
         <div className="modal_header">
             <Logo />
         </div>
@@ -55,22 +59,22 @@ const LoginModal:FC<Props> = (props): JSX.Element => {
                     <EmailInput 
                         fieldName="email" 
                         validator={validator} 
-                        onEnter={submit} />
+                        onEnter={doSubmit} />
                     <PasswordInput 
                         fieldName="password" 
                         validator={validator} 
-                        onEnter={submit} />
+                        onEnter={doSubmit} />
                 </form>
             </div>
         </div>
-        {error?.length && <div className="modal_error_message">{error}</div>}
+        {error.length > 0 && <div className="modal_error_message">{error}</div>}
         <div className="modal_footer">
             <Button 
                 text="Submit" 
                 type={BTN_TYPE.PRIMARY}
                 size={BTN_SIZE.LG}
                 disabled={!valid} 
-                onClick={submit} />
+                onClick={doSubmit} />
         </div>
     </Modal>
 }

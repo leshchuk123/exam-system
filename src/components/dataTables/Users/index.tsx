@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import Table from "../DataTable";
 import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableSortParams } from 'primereact/datatable';
+import { DataTableFilterParams, DataTableSortParams } from 'primereact/datatable';
 
 import { fetchTableData } from "../../../reducers/actions/table";
 import { IDataUser, IListOptions } from "../../../interfaces/data";
@@ -61,12 +61,31 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     const onSort = (sort: DataTableSortParams) => {
         fetchUsers(Number(page), Number(pageSize), {sort, filter})
     }
+    const onFilter = (flt: DataTableFilterParams) => {
+        console.log(Date.now(), JSON.stringify(flt, null, 2))
+    }
 
     return <Table
         records={data}
         columns={[
-            {field: "lastName", header: "Имя", body: userNameTemplate, sortable: true},
-            {field: "speciality", header: "Специальность", body: specialityTemplate, sortable: true},
+            {
+                field: "lastName",
+                header: "Имя",
+                body: userNameTemplate,
+                sortable: true,
+                filter: true,
+                filterPlaceholder: "по имени",
+                filterMatchMode: "contains",
+            },
+            {
+                field: "speciality",
+                header: "Специальность",
+                body: specialityTemplate,
+                sortable: true,
+                filter: true,
+                filterPlaceholder: "по специальности",
+                filterMatchMode: "contains",
+            },
             {field: "grade", header: "Грейд", sortable: true},
             {field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true},
             {field: "accessDate", header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate), sortable: true},
@@ -77,6 +96,7 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
         page={page}
         onPageChange={onPageChange}
         onSort={onSort}
+        onFilter={onFilter}
         loading={loading}
         sort={sort}
     />

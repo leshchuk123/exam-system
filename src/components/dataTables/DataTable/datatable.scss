@@ -1,5 +1,10 @@
 .listing {
     grid-column: 4 / span 9;
     grid-row: 2;
+}
 
+.p-filter-column {
+    input {
+        width: 100%;
+    }
 }
