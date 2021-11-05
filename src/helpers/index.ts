@@ -1,4 +1,3 @@
-import { AnyArray, AnyMap, AnyObject, AnySet, Objectish } from "@reduxjs/toolkit/node_modules/immer/dist/internal";
 import { KeyboardEvent } from "react";
 
 const letters: { [key: string]: string } = {
@@ -78,6 +77,14 @@ export const plural = (str: string) => {
     if ((match = str.match(/^(.+)([cs])$/))) return `${match[1]}${match[2]}es`;
     return `${str}s`;
 }
+export const singular = (str: string) => {
+    let match;
+    if ((match=str.match(/^(.+)ies$/))) return `${match[1]}y`;
+    if ((match = str.match(/^(.+)(es|s)$/))) return match[1];
+    return str;
+}
+
+export const num2bits = (n: number) => n.toString(2).split("").reverse().map((v, i) => v === "1" ? Math.pow(2, i) : 0).filter(v => !!v);
 
 export const comparator = (v1: any, v2: any, strict = true): boolean => {
     if (v1 === undefined || v1 === null) return v1 === v2;

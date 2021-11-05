@@ -4,7 +4,17 @@
 }
 
 .p-filter-column {
-    input {
+    input, .p-multiselect {
         width: 100%;
     }
+}
+.p-sortable-column {
+    padding-right: 40px !important;
+    position: relative;
+}
+.p-sortable-column-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 16px;
 }

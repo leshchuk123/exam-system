@@ -3,7 +3,7 @@ import { AppDispatch } from "../../store";
 import { errToStr } from "../../helpers";
 import { list } from "../api/table";
 
-export const fetchTableData = function <T>(
+export const fetchTableData = function(
     table: string,
     page: number,
     pageSize: number,

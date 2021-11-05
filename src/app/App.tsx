@@ -15,6 +15,7 @@ import { FETCH_STATE } from '../constants/data';
 
 import UsersTable from "../components/dataTables/Users";
 import TasksTable from "../components/dataTables/Tasks";
+import HistoryTable from "../components/dataTables/History";
 
 const mapState = (state: RootState) => {
     const { data, status, error } = state.user;
@@ -35,7 +36,8 @@ const App: FC<PropsFromRedux> = (props): JSX.Element => {
             <LoginModal open={!data?.userUid && status !== FETCH_STATE.LOADING} error={String(error)} />
             <Switch>
                 <Route path="/" exact component={UsersTable} />
-                <Route path="/users" component={UsersTable} />
+                <Route path="/history" exact component={HistoryTable} />
+                <Route path="/users" exact component={UsersTable} />
                 <Route path="/tasks" component={TasksTable} />
             </Switch>
         </div>

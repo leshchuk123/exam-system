@@ -37,7 +37,7 @@ export interface IDataAttempt {
     id?: number
     user?: number | IDataUser
     reviewer?: number | IDataUser
-    examDate?: Date | string | number
+    examDate?: string 
     result?: number
 }
 export interface IDataOption {
@@ -86,8 +86,8 @@ export interface IDataTableState<T> {
     page: number
     total: number
     pageSize: number
-    sort: DataTableSortParams | null
-    filter: DataTableFilterParams | null
+    sort: DataTableSortParams
+    filter: DataTableFilterParams 
     status: FETCH_STATE
     error: string
 }
@@ -98,8 +98,8 @@ export interface IDataTableAction<T> {
         page: number
         total: number
         pageSize: number
-        sort: DataTableSortParams | null
-        filter: DataTableFilterParams | null
+        sort: DataTableSortParams 
+        filter: DataTableFilterParams 
         error: string
     }
 }
@@ -108,11 +108,11 @@ export interface IDataTableAPIResponse<T> {
     page: number,
     total: number,
     pageSize: number,
-    sort: DataTableSortParams | null
-    filter: DataTableFilterParams | null
+    sort: DataTableSortParams 
+    filter: DataTableFilterParams 
 }
 
 export interface IListOptions {
-    sort?: DataTableSortParams | null
-    filter?: DataTableFilterParams | null
+    sort?: DataTableSortParams 
+    filter?: DataTableFilterParams 
 }

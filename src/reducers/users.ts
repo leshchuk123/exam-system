@@ -6,8 +6,19 @@ const initialState: IDataTableState<IDataUser> = {
     page: 1,
     pageSize: 20,
     total: 0,
-    sort: null,
-    filter: null,
+    sort: {
+        sortField: "",
+        sortOrder: 1,
+        multiSortMeta: undefined
+    },
+    filter: {
+        filters: {
+            firstName: { value: "", matchMode: "contains" },
+            specialities: { value: [], matchMode: "in" },
+            grades: { value: [], matchMode: "in" },
+            roles: { value: 0, matchMode: "custom" },
+        }
+    },
     status: FETCH_STATE.NONE,
     error: "",
 };
@@ -20,8 +31,8 @@ const usersReducer: IDataTableReducer<IDataUser> = (state = initialState, action
         page = 1,
         total = 0,
         pageSize = state.pageSize,
-        sort = null,
-        filter = null,
+        sort,
+        filter,
         error = "",
     } = payload || {};
     switch (type) {

@@ -7,19 +7,22 @@ import { v4 as uuidv4 } from "uuid";
 import "./datatable.scss";
 import { IDataAny } from "../../../interfaces/data";
 import { comparator } from "../../../helpers";
+import DefferedInput from "../../ui/inputs/DefferedInput";
 
 interface IDataTableColumnProps extends ColumnProps {
     body?: (rowData: IDataAny) => string
     showApplyButton?: boolean
 }
 interface IProps extends DataTableProps {
+    title?: string
     records: object[]
     columns: IDataTableColumnProps[]
     total?: number
     pageSize?: number
     page?: number
     loading?: boolean
-    sort: DataTableSortParams | null
+    sort?: DataTableSortParams
+    error?: string
     onPageChange?: (event: PaginatorPageState) => void
     onSort?: (v: DataTableSortParams) => void
     onFilter?: (flt: DataTableFilterParams) => void
@@ -27,6 +30,7 @@ interface IProps extends DataTableProps {
 
 const Table: FC<IProps> = (props): JSX.Element => {
     const {
+        title,
         records = [],
         columns = [],
         total = 0,
@@ -36,7 +40,8 @@ const Table: FC<IProps> = (props): JSX.Element => {
         onSort = () => void 0,
         onFilter = () => void 0,
         loading = false,
-        sort = null,
+        sort,
+        error,
         ...rest
     } = props;
 
@@ -56,11 +61,13 @@ const Table: FC<IProps> = (props): JSX.Element => {
     }
 
     return <div className={`listing`}>
+        {!!title && <h1>{title}</h1>}
         <DataTable
             value={records}
             onSort={onSort}
             onFilter={onFilterWrapper}
             loading={loading}
+            emptyMessage={error || "Нет данных"}
             {...sort}
             {...rest}
         >

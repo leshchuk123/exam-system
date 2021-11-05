@@ -5,6 +5,8 @@ import { makeServer } from "../server";
 import { IDump } from "../mocks/constants";
 import { generateDump } from '../mocks/generator';
 
+const pluralize = require('pluralize')
+
 export const createServer = () => {
     window.server = makeServer({ environment: "development" });
     let { dump, uids } = fetchDumpFromStorage();
@@ -36,12 +38,24 @@ export const collectionToArray = function<T>(coll:Collection<any>) {
     coll.models.forEach((m) => arr.push(m.attrs as T));
     return arr;
 };
-export const filterCollection = function <T>(arrColl: T[], filter: DataTableFilterParams | null = null) {
-    // filter.forEach((flt) => {
-    //     const { field, value } = flt;
-    //     arrColl = arrColl.filter(v => v[field] === value);
-    // });;
-    return arrColl;
+export const filterCollection = function <T>(arrColl: T[], filter: DataTableFilterParams ) {
+    let arrRes = [...arrColl];
+    for (let flt in filter?.filters) {
+        const { value, matchMode } = filter?.filters[flt];
+        if (matchMode === "contains" && !!value) {
+            const val = String(value).toLowerCase();
+            arrRes = arrRes.filter((v) => String(v).toLowerCase().indexOf(val) !== -1);
+        }
+        else if (matchMode === "in" && value instanceof Array && value.length > 0) {
+            arrRes = arrRes.filter((v: any) => value.indexOf(v[pluralize.singular(flt)]) !== -1);
+        }
+        else if (matchMode === "custom" && !!value) {
+            if (flt === "roles") {
+                arrRes = arrRes.filter((v: any) => (Number(value) & Number(v.roles)) > 0);
+            }
+        }
+    }
+    return arrRes;
 };
 export const sortCollection = function <T>(arrColl: T[], sort: DataTableSortParams | null = null) {
     const { sortField, sortOrder = 1 } = sort || {};
