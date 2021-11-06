@@ -27,42 +27,22 @@ export function makeServer({ environment = 'test' }) {
                 return user;
             });
 
-            this.get("/users/:uid/history", (schema, request) => {
-                const { uid } = request.params;
-                const user = schema.users.findBy({ userUid: uid });
-                debugger
-                return [];
-            });
-
             this.post("/users/signout", (schema, request) => {
                 const data = JSON.parse(request.requestBody);
                 // const {uid} = data;
                 return true;
             });
 
-            this.get("/users/:uid", (schema, request) => {
-                const { uid } = request.params;
-                return schema.users.findBy({ userUid: uid });
-            });
+            ["users", "tasks", "specialities", "modes", "attempts", "options", "answers"].forEach(name => {
+                this.post(`/${name}`, (schema, request) => {
+                    const collection = schema[name].all();
+                    return process(collection, request.requestBody, schema)
+                });
 
-            this.post("/users", (schema, request) => {
-                let users = schema.users.all();
-                return process(users, request.requestBody, schema);
-            });
-
-            this.post("/tasks", (schema, request) => {
-                let tasks = schema.tasks.all();
-                return process(tasks, request.requestBody, schema);
-            });
-
-            this.post("/attempts", (schema, request) => {
-                let attempts = schema.attempts.all();
-                return process(attempts, request.requestBody, schema);
-            });
-
-            this.post("/specialities", (schema, request) => {
-                let specialities = schema.specialities.all();
-                return process(specialities, request.requestBody, schema);
+                this.get(`/${name}/:id`, (schema, request) => {
+                    const { id } = request.params;
+                    return schema[name].findBy({ id });
+                });
             });
         },
     });
