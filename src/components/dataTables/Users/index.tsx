@@ -1,17 +1,18 @@
-import { FC, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import Table from "../DataTable";
 import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableFilterParams, DataTableSortParams } from 'primereact/datatable';
-import { MultiSelect } from "primereact/multiselect";
-import { InputText } from 'primereact/inputtext';
+import { DataTableFilterMatchModeType, DataTableSortParams } from 'primereact/datatable';
 
-import { fetchTableData } from "../../../reducers/actions/table";
-import { IDataUser, IListOptions, ROLE } from "../../../interfaces/data";
+import { deleteTableRecord, fetchTableData } from "../../../reducers/actions/table";
+import { IDataAll, IDataUser, IListOptions, ROLE } from "../../../interfaces/data";
 import { FETCH_STATE } from "../../../constants/data";
-import { dateFormater, num2bits, range } from "../../../helpers";
+import { dateFormater, range } from "../../../helpers";
 import { rolesTemplate, specialityTemplate, userNameTemplate } from "../fieldsTemplates";
+import TextFilter from "../filterElemets/TextFilter";
+import MultiSelectFilter from "../filterElemets/MultiSelectFilter";
+import BitwiseMulyiSelectFilter from "../filterElemets/BitwiseMulyiSelectFilter";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.users;
@@ -23,7 +24,8 @@ const mapState = (state: RootState) => {
 }
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
-        fetchUsers: (page:number, pageSize:number, options:IListOptions) => fetchTableData("users", page, pageSize, options, dispatch),
+        fetch: (page:number, pageSize:number, options:IListOptions) => fetchTableData("users", page, pageSize, options, dispatch),
+        delRec: (id: number) => deleteTableRecord("users", id, dispatch),
         fetchSpecialities: () => fetchTableData("specialities", 1, 100, {}, dispatch),
         clearData: () => dispatch({ type: "users_clear" }),
     }
@@ -32,47 +34,22 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export interface IUsersFilter {
+export interface IFilters {
     filters: {
-        name: {
-            value: string;
-            matchMode: "contains";
-        }
-        specialities: {
-            value: number[];
-            matchMode: "in";
-        }
-        grades: {
-            value: number[];
-            matchMode: "in";
-        }
-        roles: {
-            value: number;
-            matchMode: "custom";
+        [name:string]: {
+            value: string | number[] | number;
+            matchMode: DataTableFilterMatchModeType;
         }
     }
 }
-
-const defFilter: IUsersFilter = {
+const defFilter: IFilters = {
     filters: {
-        name: {
-            value: "",
-            matchMode: "contains",
-        },
-        specialities: {
-            value: [],
-            matchMode: "in"
-        },
-        grades: {
-            value: [],
-            matchMode: "in"
-        },
-        roles: {
-            value: 0,
-            matchMode: "custom"
-        },
+        name: { value: "", matchMode: "contains" },
+        specialities: { value: [], matchMode: "in" },
+        grades: { value: [], matchMode: "in" },
+        roles: { value: 0, matchMode: "custom" },
     }
-}
+};
 
 const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     const {
@@ -83,19 +60,20 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
         status,
         error,
         userUid,
-        fetchUsers,
-        fetchSpecialities,
         specialities,
+        fetch,
+        fetchSpecialities,
+        delRec,
         clearData,
     } = props;
 
-    const [filter, setFilter] = useState<IUsersFilter>(defFilter);
+    const [filter, setFilter] = useState<IFilters>(defFilter);
     const [sort, setSort] = useState<DataTableSortParams>();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (userUid) {
-            fetchUsers(Number(page), Number(pageSize), { sort, filter });
+            fetch(Number(page), Number(pageSize), { sort, filter });
             fetchSpecialities();
         }
         else clearData();
@@ -108,100 +86,20 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     const onPageChange = (e: PaginatorPageState) => {
         let { page, rows } = e;
         if (rows !== pageSize) page = 0;
-        fetchUsers(Number(page + 1), Number(rows), {sort, filter})
+        fetch(Number(page + 1), Number(rows), {sort, filter})
     }
-
     const onSort = (sort: DataTableSortParams) => {
         setSort(sort);
     }
-
-    const onFilter = (filterData: DataTableFilterParams) => {
-        console.log(Date.now(), {filterData})
+    const onDelCallback = (row: IDataAll) => {
         debugger
-        const newFilter = {
-            ...filter,
-            filters: {
-                ...filter?.filters,
-                ...filterData.filters
-            }
-        };
-        console.log({ filterData, newFilter })
-        setFilter(newFilter);
+        delRec(row.id);
     }
-
-    const nameFilterTemplate = <InputText
-        value={filter.filters.name.value}
-        onChange={(e) => {
-
-        }}
-    />
-
-    const specialityFilterTemplate = <MultiSelect
-        options={specialities}
-        optionLabel="name"
-        optionValue="id"
-        value={filter.filters.specialities.value}
-        onChange={(filterData) => {
-            const newFilter = {
-                ...filter,
-                filters: {
-                    ...filter?.filters,
-                    specialities: {
-                        ...filter.filters.specialities,
-                        value: filterData.value
-                    }
-                }
-            };
-            setFilter(newFilter);
-        }}
-    />;
-    const gradeFilterTempate = <MultiSelect
-        options={range(1,16).map(v =>({value:v,text:`${v} grade`}))}
-        optionLabel="text"
-        optionValue="value"
-        value={filter.filters.grades.value}
-        onChange={(filterData) => {
-            const newFilter = {
-                ...filter,
-                filters: {
-                    ...filter?.filters,
-                    grades: {
-                        ...filter.filters.grades,
-                        value: filterData.value
-                    }
-                }
-            };
-            setFilter(newFilter);
-        }}
-    />;
-    const rolesFilterTempate = <MultiSelect
-        options={[
-            { text: "Пользователи", value: ROLE.EXAMINEE },
-            { text: "Администраторы", value: ROLE.ADMIN },
-            { text: "Руководители", value: ROLE.SUPERVISOR },
-        ]}
-        optionLabel="text"
-        optionValue="value"
-        value={num2bits(filter.filters.roles.value)}
-        onChange={(filterData) => {
-            const value = filterData.value.reduce((acc: number, cur: number) => cur + acc, 0);
-            const newFilter = {
-                ...filter,
-                filters: {
-                    ...filter?.filters,
-                    roles: {
-                        ...filter.filters.roles,
-                        value
-                    }
-                }
-            };
-            setFilter(newFilter);
-        }}
-    />;
 
     return <>
         <Table
             title="Пользователи"
+            collection="users"
             records={data}
             columns={[
                 {
@@ -210,9 +108,10 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
                     body: userNameTemplate,
                     sortable: true,
                     filter: true,
-                    filterPlaceholder: "по имени",
-                    filterField: "name",
-                    filterMatchMode: "contains",
+                    filterElement: <TextFilter
+                        filterName="name"
+                        {...{ filter, setFilter }}
+                    />,
                 },
                 {
                     field: "speciality",
@@ -221,7 +120,10 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
                     sortable: true,
                     filter: true,
                     filterPlaceholder: "по специальности",
-                    filterElement: specialityFilterTemplate,
+                    filterElement: <MultiSelectFilter
+                        filterName="specialities"
+                        {...{ filter, setFilter }}
+                    />,
                 },
                 {
                     field: "grade",
@@ -229,10 +131,14 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
                     sortable: true,
                     filter: true,
                     filterField: "grades",
-                    filterElement: gradeFilterTempate,
+                    filterElement: <MultiSelectFilter
+                        filterName="grades"
+                        data={range(1, 16).map(v => ({ value: v, text: `${v} grade` }))}
+                        {...{ filter, setFilter }}
+                    />,
                 },
-                {field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true},
-                {field: "accessDate", header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate), sortable: true},
+                { field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true },
+                { field: "accessDate", header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate), sortable: true },
                 {
                     field: "roles",
                     header: "Группы",
@@ -240,19 +146,20 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
                     sortable: true,
                     filter: true,
                     filterField: "roles",
-                    filterElement: rolesFilterTempate,
+                    filterElement: <BitwiseMulyiSelectFilter
+                        filterName="roles"
+                        data={[
+                            { text: "Пользователи", value: ROLE.EXAMINEE },
+                            { text: "Администраторы", value: ROLE.ADMIN },
+                            { text: "Руководители", value: ROLE.SUPERVISOR },
+                        ]}
+                        {...{ filter, setFilter }}
+                    />
                 },
             ]}
-            total={total}
-            pageSize={pageSize}
-            page={page}
-            onPageChange={onPageChange}
-            onSort={onSort}
-            onFilter={onFilter}
-            loading={loading}
-            sort={sort}
+            {...{ total, pageSize, page, loading, sort, onPageChange, onSort, onDelCallback, error }}
         />
     </>
 }
 
-export default connector(UsersList);
+export default connector(memo(UsersList));

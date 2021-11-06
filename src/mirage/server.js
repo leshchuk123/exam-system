@@ -43,6 +43,14 @@ export function makeServer({ environment = 'test' }) {
                     const { id } = request.params;
                     return schema[name].findBy({ id });
                 });
+
+                this.delete(`/${name}/:id`, (schema, request) => {
+                    const { id } = request.params;
+                    debugger
+                    const rec = schema[name].findBy({ id });
+                    rec.destroy();
+                    return true;
+                });
             });
         },
     });
@@ -63,13 +71,14 @@ export const processAssociations = function(arr, schema) {
     });
 }
 export const process = (collection, requestBody, schema) => {
-    const { page = 1, options = {}, pageSize = 20 } = JSON.parse(requestBody);
+    let { page = 1, pageSize = 20, options = {} } = JSON.parse(requestBody);
     const { sort = null, filter } = options;
     let arr = collectionToArray(collection);
     if (sort) arr = sortCollection(arr, sort);
     arr = filterCollection(arr, filter);
     processAssociations(arr, schema);
     const total = arr.length;
+    while (pageSize * (page - 1) >= total) page--;
     const data = slicePage(arr, page, pageSize);
     data.forEach((v) => { v.id = Number(v.id) });
     return { page, total, pageSize, data, sort, filter };

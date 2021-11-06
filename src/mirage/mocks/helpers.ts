@@ -40,17 +40,24 @@ export const collectionToArray = function<T>(coll:Collection<any>) {
 };
 export const filterCollection = function <T>(arrColl: T[], filter: DataTableFilterParams ) {
     let arrRes = [...arrColl];
-    for (let flt in filter?.filters) {
-        const { value, matchMode } = filter?.filters[flt];
+    for (let filterName in filter?.filters) {
+        const { value, matchMode } = filter?.filters[filterName];
         if (matchMode === "contains" && !!value) {
             const val = String(value).toLowerCase();
-            arrRes = arrRes.filter((v) => String(v).toLowerCase().indexOf(val) !== -1);
+            arrRes = arrRes.filter((rec) => {
+                let recVal,match;
+                if (filterName === "name") recVal = `${(rec as any).firstName} ${(rec as any).lastName}`;
+                else if ((match = filterName.match(/^(.+)\.name$/))) recVal = `${(rec as any)[match[1]].firstName} ${(rec as any)[match[1]].lastName}`;
+                else if ((match = filterName.match(/^(.+)\.(.+)$/))) recVal = `${(rec as any)[match[1]][match[2]]}`;
+                else recVal = (rec as any)[filterName];
+                return String(recVal).toLowerCase().indexOf(val) !== -1
+            });
         }
         else if (matchMode === "in" && value instanceof Array && value.length > 0) {
-            arrRes = arrRes.filter((v: any) => value.indexOf(v[pluralize.singular(flt)]) !== -1);
+            arrRes = arrRes.filter((v: any) => value.indexOf(v[pluralize.singular(filterName)]) !== -1);
         }
         else if (matchMode === "custom" && !!value) {
-            if (flt === "roles") {
+            if (filterName === "roles") {
                 arrRes = arrRes.filter((v: any) => (Number(value) & Number(v.roles)) > 0);
             }
         }

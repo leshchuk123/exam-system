@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableSortParams } from 'primereact/datatable';
+import { DataTableFilterMatchModeType, DataTableSortParams } from 'primereact/datatable';
 
 import Table from "../DataTable";
 
@@ -10,6 +10,7 @@ import { IDataAttempt, IDataUser, IListOptions } from "../../../interfaces/data"
 import { FETCH_STATE } from "../../../constants/data";
 import { fetchTableData } from "../../../reducers/actions/table";
 import { dateFormater } from "../../../helpers";
+import TextFilter from "../filterElemets/TextFilter";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.attempts;
@@ -26,15 +27,21 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export interface IAttemptsFilter {
+export interface IFilters {
     filters: {
+        [name:string]: {
+            value: string | number[] | number;
+            matchMode: DataTableFilterMatchModeType;
+        }
     }
 }
+const defFilter: IFilters = {
+    filters: {
+        "user.name": { value: "", matchMode: "contains" },
+        "reviewer.name": { value: "", matchMode: "contains" },
+    }
+};
 
-const defFilter: IAttemptsFilter = {
-    filters: {
-    }
-}
 
 const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const {
@@ -49,12 +56,8 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         clearData,
     } = props;
 
-    const [filter, setFilter] = useState<IAttemptsFilter>(defFilter);
-    const [sort, setSort] = useState<DataTableSortParams>({
-        sortField: "examDate",
-        sortOrder: -1,
-        multiSortMeta: undefined
-    });
+    const [filter, setFilter] = useState<IFilters>(defFilter);
+    const [sort, setSort] = useState<DataTableSortParams>();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -86,20 +89,34 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     }
     return <Table
         title="История тестирования"
+        collection="attempts"
         records={data}
+        locked={true}
         columns={[
-            { field: "user", header: "Экзаменуемый", body: userNameTemplate, filter: true },
-            { field: "reviewer", header: "Проверяющий", body: reviewerNameTemplate, filter: true },
+            {
+                field: "user",
+                header: "Экзаменуемый",
+                body: userNameTemplate,
+                filter: true,
+                filterElement: <TextFilter
+                    filterName="user.name"
+                    {...{ filter, setFilter }}
+                />,
+            },
+            {
+                field: "reviewer",
+                header: "Проверяющий",
+                body: reviewerNameTemplate,
+                filter: true,
+                filterElement: <TextFilter
+                    filterName="reviewer.name"
+                    {...{ filter, setFilter }}
+                />,
+            },
             { field: "examDate", header: "Дата", body: (row: IDataAttempt) => dateFormater(row.examDate), sortable: true },
             { field: "result", header: "Результат", sortable: true },
         ]}
-        total={total}
-        pageSize={pageSize}
-        page={page}
-        onPageChange={onPageChange}
-        onSort={onSort}
-        loading={loading}
-        sort={sort}
+        {...{ total, pageSize, page, loading, sort, onPageChange, onSort, error }}
     />;
 }
 

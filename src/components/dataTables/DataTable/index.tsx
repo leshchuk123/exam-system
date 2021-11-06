@@ -1,20 +1,22 @@
-import React, { FC, useRef } from "react";
-import { DataTable, DataTableFilterParams, DataTableProps, DataTableSortParams } from 'primereact/datatable';
+import { FC } from "react";
+import { DataTable, DataTableProps, DataTableSortParams } from 'primereact/datatable';
 import { Column, ColumnProps } from 'primereact/column';
 import { Paginator, PaginatorPageState } from 'primereact/paginator';
+import { Button } from 'primereact/button';
 import { v4 as uuidv4 } from "uuid";
 
 import "./datatable.scss";
-import { IDataAny } from "../../../interfaces/data";
-import { comparator } from "../../../helpers";
-import DefferedInput from "../../ui/inputs/DefferedInput";
+import { IDataAll, IDataAny } from "../../../interfaces/data";
+import { Link } from "react-router-dom";
 
 interface IDataTableColumnProps extends ColumnProps {
     body?: (rowData: IDataAny) => string
     showApplyButton?: boolean
 }
 interface IProps extends DataTableProps {
-    title?: string
+    title: string
+    collection?: string
+    locked?: boolean
     records: object[]
     columns: IDataTableColumnProps[]
     total?: number
@@ -23,55 +25,75 @@ interface IProps extends DataTableProps {
     loading?: boolean
     sort?: DataTableSortParams
     error?: string
+    onDelCallback?: (record: IDataAll) => void
     onPageChange?: (event: PaginatorPageState) => void
     onSort?: (v: DataTableSortParams) => void
-    onFilter?: (flt: DataTableFilterParams) => void
 }
 
 const Table: FC<IProps> = (props): JSX.Element => {
     const {
         title,
+        collection,
+        locked = false,
         records = [],
         columns = [],
         total = 0,
         page = 1,
         pageSize = 20,
-        onPageChange = () => void 0,
-        onSort = () => void 0,
-        onFilter = () => void 0,
         loading = false,
         sort,
         error,
+        onPageChange = () => void 0,
+        onSort = () => void 0,
+        onDelCallback = () => void 0,
         ...rest
     } = props;
 
-    const currentFilter = useRef<DataTableFilterParams | null>(null);
-    const filterTimer = useRef<number | null>(null);
-
-
-    const onFilterWrapper = (flt?: DataTableFilterParams) => {
-        let newFlt = !comparator(flt, currentFilter.current) ? flt : null;
-        if (filterTimer.current === null && !!newFlt) {
-            onFilter(newFlt);
-            filterTimer.current = window.setTimeout(() => {
-                filterTimer.current = null;
-                onFilterWrapper();
-            }, 2000)
-        }
-    }
+    const header =  (
+        <div className="table-header">
+            <h1>{title}</h1>
+            <div className="table-header-tools">
+                <Link to={`/${collection}/new`}>
+                    <Button
+                        icon="pi pi-plus"
+                        className="p-button-raised p-button-success"
+                    />
+                </Link>
+            </div>
+        </div>
+    );
 
     return <div className={`listing`}>
-        {!!title && <h1>{title}</h1>}
         <DataTable
             value={records}
             onSort={onSort}
-            onFilter={onFilterWrapper}
             loading={loading}
+            header={header}
             emptyMessage={error || "Нет данных"}
             {...sort}
             {...rest}
         >
             {columns.map(col => <Column key={uuidv4()} {...col}></Column>)}
+            {!locked && <Column
+                body={(row: IDataAll) => <div className="row_controls">
+                    <Link to={`/${collection}/edit/${row.id}`}>
+                        <Button
+                            icon="pi pi-pencil"
+                            className="p-button-rounded p-button-success p-button-raised"
+                        />
+                    </Link>
+                    <Button
+                        icon="pi pi-times"
+                        className="p-button-rounded p-button-danger p-button-raised"
+                        onClick={() => {
+                            if (window.confirm("Удалить запись?")) {
+                                onDelCallback(row);
+                            }
+                        }}
+                    />
+                </div>}
+                style={{ width: 150 }}
+            />}
         </DataTable>
         {records.length > 0 && <Paginator
             rows={pageSize}

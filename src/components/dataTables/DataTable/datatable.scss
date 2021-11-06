@@ -2,7 +2,16 @@
     grid-column: 4 / span 9;
     grid-row: 2;
 }
+.table-header {
+    display: flex;
+    align-items: center;
+    place-content: space-between;
 
+    .table-header-tools {
+        display: flex;
+        align-items: center;
+    }
+}
 .p-filter-column {
     input, .p-multiselect {
         width: 100%;
@@ -17,4 +26,10 @@
     top: 50%;
     transform: translateY(-50%);
     right: 16px;
+}
+.row_controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
 }

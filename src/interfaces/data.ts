@@ -53,8 +53,8 @@ export interface IDataAnswer {
     task?: number | IDataTask
     option?: number | IDataOption
 }
-export type IDataAny = IDataAnswer | IDataAttempt | IDataMode | IDataOption | IDataSpeciality | IDataTask | IDataUser;
-export type IDataAll = IDataAnswer & IDataAttempt & IDataMode & IDataOption & IDataSpeciality & IDataTask & IDataUser;
+export type IDataAny = IDataAnswer | IDataAttempt | IDataMode | IDataOption | IDataSpeciality | IDataTask | IDataUser | {[key: string]:string};
+export type IDataAll = IDataAnswer & IDataAttempt & IDataMode & IDataOption & IDataSpeciality & IDataTask & IDataUser & {[key: string]:string};
 
 export interface IUserReducer {
     (
