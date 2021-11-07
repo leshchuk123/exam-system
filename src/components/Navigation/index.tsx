@@ -31,7 +31,7 @@ const Navigation: FC<IProps & RouteComponentProps & PropsFromRedux> = ({ history
         grade = 0,
     } = user.data;
     const isAdmin = (roles & ROLE.ADMIN) > 0;
-    const mayExam = grade < 16;
+    const mayExam = true;// grade < 16;
     const authorized = !!userUid;
     
     return <div className="navigation">

@@ -4,8 +4,6 @@ import UserForm from "../UserForm";
 import { dicCollections } from "../../../constants/data";
 
 import "./RecordForm.scss"
-import { IDataAll } from "../../../interfaces/data";
-import { add, update } from "../../../reducers/api/table";
 
 const RecordForm: FC<RouteComponentProps> = (props): JSX.Element => {
 

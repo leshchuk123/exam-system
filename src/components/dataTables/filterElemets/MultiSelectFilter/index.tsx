@@ -2,7 +2,7 @@ import { FC, memo, useEffect, useRef, useState } from "react";
 import { DataTableFilterParams } from "primereact/datatable";
 import { MultiSelect } from "primereact/multiselect";
 import { IDataAll } from "../../../../interfaces/data";
-import { fetchList } from "../../../../reducers/actions/table";
+import { list } from "../../../../reducers/api/table";
 
 interface Option {
     value: number,
@@ -35,7 +35,7 @@ const MultiSelectFilter: FC<IProps> = (props): JSX.Element => {
 
     useEffect(() => {
         if (collection) {
-            fetchList(collection, 1, 10000, {})
+            list(collection, 1, 10000, {})
                 .then((response) => {
                     if (response.status === 200 || response.status === 201) return response.json();
                 })

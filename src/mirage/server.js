@@ -1,4 +1,5 @@
 import { createServer, Model } from "miragejs"
+import { rndArrSlice, shuffle } from "../helpers";
 import { collectionToArray, sortCollection, slicePage, filterCollection, saveDumpToStorage } from "./mocks/helpers";
 const pluralize = require('pluralize')
 
@@ -70,6 +71,29 @@ export function makeServer({ environment = 'test' }) {
                     return true;
                 });
             });
+
+            this.get("/exam/:speciality/:grade", (schema, request) => {
+                const { speciality, grade } = request.params;
+                const tasks = shuffle(
+                    rndArrSlice(
+                        collectionToArray(
+                            schema.tasks.all()
+                                .filter(v =>
+                                    v.speciality == speciality
+                                    && v.grade == grade)
+                        ), 10
+                    )
+                );
+                tasks.forEach((task, i, arr) => {
+                    task.options = shuffle(
+                        collectionToArray(
+                            schema.options.all()
+                                .filter(v => v.task == task.id)
+                        )
+                    );
+                });
+                return tasks;
+            })
         },
     });
 }

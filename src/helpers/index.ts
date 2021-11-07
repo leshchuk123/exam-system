@@ -30,6 +30,28 @@ export const rndArrItem = function<T>(arr: T[]): T {
     return arr[rnd(0, arr.length - 1)];
 }
 
+export const rndArrSlice = function <T>(arr: T[], length: number): T[] {
+    const res = [...arr];
+    while (res.length > length) {
+        res.splice(rnd(0, res.length - 1), 1);
+    }
+    return res;
+};
+export const shuffle = function<T>(arr: T[]): T[] {
+    const res = [...arr];
+    for (let i = res.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1)); // случайный индекс от 0 до i
+
+        // поменять элементы местами
+        // мы используем для этого синтаксис "деструктурирующее присваивание"
+        // подробнее о нём - в следующих главах
+        // то же самое можно записать как:
+        // let t = array[i]; array[i] = array[j]; array[j] = t
+        [res[i], res[j]] = [res[j], res[i]];
+    }
+    return res;
+}
+
 export const pad = (v: number, length = 2) => {
     let res = String(v);
     while (res.length < length) res = "0" + res;

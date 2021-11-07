@@ -3,7 +3,7 @@ import { AppDispatch } from "../../store";
 import { errToStr } from "../../helpers";
 import { del, get, list } from "../api/table";
 
-const pluralize = require('pluralize')
+const pluralize = require('pluralize');
 
 export const fetchTableData = (
     table: string,
@@ -34,13 +34,6 @@ export const fetchTableData = (
             })
         });
 }
-
-export const fetchList = (
-    table: string,
-    page: number,
-    pageSize: number,
-    options: IListOptions,
-) => list(table, page, pageSize, options);
 
 export const deleteTableRecord = (table: string, id: number, dispatch: AppDispatch) => {
     dispatch({ type: `${table}_delete_start` });

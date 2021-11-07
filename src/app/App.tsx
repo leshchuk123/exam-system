@@ -18,6 +18,7 @@ import TasksTable from "../components/dataTables/Tasks";
 import HistoryTable from "../components/dataTables/History";
 
 import RecordForm from "../components/forms/RecordForm";
+import ExamForm from '../components/forms/ExamForm';
 
 const mapState = (state: RootState) => {
     const { data, status, error } = state.user;
@@ -43,6 +44,7 @@ const App: FC<PropsFromRedux> = (props): JSX.Element => {
                 <Route path="/history" exact component={HistoryTable} />
                 <Route path="/users" exact component={UsersTable} />
                 <Route path="/tasks" exact component={TasksTable} />
+                <Route path="/exam" exact component={ExamForm} />
             </Switch>
         </div>
     );
