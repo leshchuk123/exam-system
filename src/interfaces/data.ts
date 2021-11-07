@@ -1,11 +1,6 @@
 import { DataTableFilterParams, DataTableSortParams } from 'primereact/datatable';
 import { FETCH_STATE } from "../constants/data";
 
-export enum ROLE {
-    EXAMINEE = 1,
-    ADMIN = 2,
-    SUPERVISOR = 4
-}
 export interface IDataUser {
     id?: number
     userUid?: string

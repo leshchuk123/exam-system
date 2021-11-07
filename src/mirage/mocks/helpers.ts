@@ -14,7 +14,7 @@ export const createServer = () => {
         const newDump = generateDump();
         dump = newDump.dump;
         uids = newDump.uids;
-        saveDumpToStorage(dump,uids)
+        saveDumpToStorage(dump, uids);
     }
     window.server.db.loadData(dump);
     window.uids = uids;

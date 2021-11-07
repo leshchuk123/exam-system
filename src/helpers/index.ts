@@ -123,6 +123,7 @@ export const comparator = (v1: any, v2: any, strict = true): boolean => {
         keys1.forEach(key => {
             res = res && comparator(v1[key], v2[key], strict);
         })
+        return res;
     }
     return false;
 };

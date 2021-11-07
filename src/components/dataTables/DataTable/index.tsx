@@ -16,7 +16,7 @@ interface IDataTableColumnProps extends ColumnProps {
 interface IProps extends DataTableProps {
     title: string
     collection?: string
-    locked?: boolean
+    editable?: boolean
     records: object[]
     columns: IDataTableColumnProps[]
     total?: number
@@ -34,7 +34,7 @@ const Table: FC<IProps> = (props): JSX.Element => {
     const {
         title,
         collection,
-        locked = false,
+        editable = true,
         records = [],
         columns = [],
         total = 0,
@@ -52,18 +52,18 @@ const Table: FC<IProps> = (props): JSX.Element => {
     const header =  (
         <div className="table-header">
             <h1>{title}</h1>
-            <div className="table-header-tools">
+            {editable && <div className="table-header-tools">
                 <Link to={`/${collection}/new`}>
                     <Button
                         icon="pi pi-plus"
                         className="p-button-raised p-button-success"
                     />
                 </Link>
-            </div>
+            </div>}
         </div>
     );
 
-    return <div className={`listing`}>
+    return <div className={`content listing`}>
         <DataTable
             value={records}
             onSort={onSort}
@@ -74,7 +74,7 @@ const Table: FC<IProps> = (props): JSX.Element => {
             {...rest}
         >
             {columns.map(col => <Column key={uuidv4()} {...col}></Column>)}
-            {!locked && <Column
+            {editable && <Column
                 body={(row: IDataAll) => <div className="row_controls">
                     <Link to={`/${collection}/edit/${row.id}`}>
                         <Button

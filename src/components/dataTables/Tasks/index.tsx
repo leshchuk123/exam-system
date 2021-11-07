@@ -92,7 +92,6 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
     }
 
     const onDelCallback = (row: IDataAll) => {
-        debugger
         delRec(row.id);
     }
 
@@ -110,6 +109,7 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
                 filter: true,
                 filterElement: <MultiSelectFilter
                     filterName="specialities"
+                    collection="specialities"
                     {...{ filter, setFilter }}
                 />,
             },

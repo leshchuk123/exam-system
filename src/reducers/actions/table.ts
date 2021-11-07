@@ -1,7 +1,9 @@
 import { IListOptions, IDataTableAPIResponse, IDataTask, IDataAny } from "../../interfaces/data";
 import { AppDispatch } from "../../store";
 import { errToStr } from "../../helpers";
-import { del, list } from "../api/table";
+import { del, get, list } from "../api/table";
+
+const pluralize = require('pluralize')
 
 export const fetchTableData = (
     table: string,
@@ -33,7 +35,7 @@ export const fetchTableData = (
         });
 }
 
-export const getFetch = (
+export const fetchList = (
     table: string,
     page: number,
     pageSize: number,
@@ -47,5 +49,28 @@ export const deleteTableRecord = (table: string, id: number, dispatch: AppDispat
         .then(response => {
             const {page = 1, pageSize = 20, options = {}} = JSON.parse(String(localStorage.getItem(`exams:table:${table}`)));
             return fetchTableData(table, page, pageSize, options, dispatch);
+        });
+}
+
+export const getTableRecord = (table: string, id: number, dispatch: AppDispatch) => {
+    dispatch({ type: `${pluralize.singular(table)}_fetch_start` });
+    
+    get(table, id)
+        .then(response => {
+            if (response.status === 200 || response.status === 201) return response.json();
+            else return null;
+        })
+        .then((json) => {
+            const { page, total, pageSize, data, sort, filter } = json;
+            dispatch({
+                type: `${pluralize.singular(table)}_set`,
+                payload: { data, page, pageSize, total, sort, filter }
+            });
+        })
+        .catch(error => {
+            dispatch({
+                type: `${pluralize.singular(table)}_fetch_error`,
+                payload: { error: errToStr(error) }
+            })
         });
 }

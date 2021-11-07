@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router";
 import { v4 as uuidv4 } from "uuid";
-import { ROLE } from "../../interfaces/data";
+import { ROLE } from "../../constants/data";
 import { RootState } from "../../store";
 
 import NavLink, { IProps as INavLinkData } from "../NavLink";

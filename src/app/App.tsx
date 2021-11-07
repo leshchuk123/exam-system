@@ -17,6 +17,8 @@ import UsersTable from "../components/dataTables/Users";
 import TasksTable from "../components/dataTables/Tasks";
 import HistoryTable from "../components/dataTables/History";
 
+import RecordForm from "../components/forms/RecordForm";
+
 const mapState = (state: RootState) => {
     const { data, status, error } = state.user;
     return { data, status, error }
@@ -36,9 +38,11 @@ const App: FC<PropsFromRedux> = (props): JSX.Element => {
             <LoginModal open={!data?.userUid && status !== FETCH_STATE.LOADING} error={String(error)} />
             <Switch>
                 <Route path="/" exact component={UsersTable} />
+                <Route path="/:collection/edit/:id" component={RecordForm} />
+                <Route path="/:collection/new" component={RecordForm} />
                 <Route path="/history" exact component={HistoryTable} />
                 <Route path="/users" exact component={UsersTable} />
-                <Route path="/tasks" component={TasksTable} />
+                <Route path="/tasks" exact component={TasksTable} />
             </Switch>
         </div>
     );

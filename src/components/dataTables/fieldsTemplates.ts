@@ -1,4 +1,5 @@
-import { IDataMode, IDataSpeciality, IDataTask, IDataUser, ROLE } from "../../interfaces/data";
+import { ROLE } from "../../constants/data";
+import { IDataMode, IDataSpeciality, IDataTask, IDataUser } from "../../interfaces/data";
 
 export const userNameTemplate = (record: IDataUser): string => {
     return `${record.firstName} ${record.lastName}`;

@@ -91,7 +91,7 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         title="История тестирования"
         collection="attempts"
         records={data}
-        locked={true}
+        editable={false}
         columns={[
             {
                 field: "user",

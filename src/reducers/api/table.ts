@@ -7,7 +7,7 @@ const defaults: RequestInit = {
     },
 };
 
-export const list = function(table: string, page:number, pageSize:number, options:IListOptions) {
+export const list = function (table: string, page: number, pageSize: number, options: IListOptions) {
     return fetch(`/api/${table}`, {
         ...defaults,
         method: "POST",
@@ -26,7 +26,7 @@ export const get = function(table: string, id: number) {
 export const add = function<T>(table: string, data: T) {
     return fetch(`/api/${table}`, {
         ...defaults,
-        method: "UPDATE",
+        method: "PUT",
         body: JSON.stringify(data)
     });
 }

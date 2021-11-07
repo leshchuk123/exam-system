@@ -6,8 +6,8 @@ import { PaginatorPageState } from 'primereact/paginator';
 import { DataTableFilterMatchModeType, DataTableSortParams } from 'primereact/datatable';
 
 import { deleteTableRecord, fetchTableData } from "../../../reducers/actions/table";
-import { IDataAll, IDataUser, IListOptions, ROLE } from "../../../interfaces/data";
-import { FETCH_STATE } from "../../../constants/data";
+import { IDataAll, IDataUser, IListOptions } from "../../../interfaces/data";
+import { FETCH_STATE, ROLE } from "../../../constants/data";
 import { dateFormater, range } from "../../../helpers";
 import { rolesTemplate, specialityTemplate, userNameTemplate } from "../fieldsTemplates";
 import TextFilter from "../filterElemets/TextFilter";
@@ -92,7 +92,6 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
         setSort(sort);
     }
     const onDelCallback = (row: IDataAll) => {
-        debugger
         delRec(row.id);
     }
 
@@ -122,6 +121,7 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
                     filterPlaceholder: "по специальности",
                     filterElement: <MultiSelectFilter
                         filterName="specialities"
+                        collection="specialities"
                         {...{ filter, setFilter }}
                     />,
                 },

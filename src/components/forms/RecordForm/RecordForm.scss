@@ -1,0 +1,9 @@
+.record-form {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+
+    .p-component:not(.p-checkbox) {
+        min-width: 300px;
+    }
+}

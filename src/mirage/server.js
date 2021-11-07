@@ -1,5 +1,5 @@
 import { createServer, Model } from "miragejs"
-import { collectionToArray, sortCollection, slicePage, filterCollection } from "./mocks/helpers";
+import { collectionToArray, sortCollection, slicePage, filterCollection, saveDumpToStorage } from "./mocks/helpers";
 const pluralize = require('pluralize')
 
 export function makeServer({ environment = 'test' }) {
@@ -44,11 +44,29 @@ export function makeServer({ environment = 'test' }) {
                     return schema[name].findBy({ id });
                 });
 
+                this.put(`/${name}`, (schema, request) => {
+                    const data = JSON.parse(request.requestBody)
+                    const collection = schema[name].all();
+                    const newId = 1 + Number(collection.models.sort((a, b) => b.id - a.id)[0].attrs.id);
+                    data.id = newId;
+                    collection.update(data);
+                    saveDumpToStorage(window.server.db.dump());
+                    return true;
+                });
+
+                this.patch(`/${name}`, (schema, request) => {
+                    const data = JSON.parse(request.requestBody)
+                    const collection = schema[name].all();
+                    collection.update(data);
+                    saveDumpToStorage(window.server.db.dump());
+                    return true;
+                });
+
                 this.delete(`/${name}/:id`, (schema, request) => {
                     const { id } = request.params;
-                    debugger
                     const rec = schema[name].findBy({ id });
                     rec.destroy();
+                    saveDumpToStorage(window.server.db.dump());
                     return true;
                 });
             });
