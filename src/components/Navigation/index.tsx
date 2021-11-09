@@ -1,37 +1,26 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { ROLE } from "../../constants/data";
 import { RootState } from "../../store";
+import { AppContext } from "../../app/App";
 
 import NavLink, { IProps as INavLinkData } from "../NavLink";
 import Divider from "./divider";
 
 import "./nav.scss";
 
-interface IProps {
-    links?: INavLinkData[]
-}
-
-const mapState = (state: RootState) => {
-    return {
-        user: state.user
-    }
-}
-
-const connector = connect(mapState);
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-const Navigation: FC<IProps & RouteComponentProps & PropsFromRedux> = ({ history, user }): JSX.Element => {
+const Navigation: FC<RouteComponentProps> = ({ history }): JSX.Element => {
     const { pathname } = history.location;
+    const { user } = useContext(AppContext);
     const {
         userUid = "",
         roles = 0,
         grade = 0,
-    } = user.data;
+    } = user;
     const isAdmin = (roles & ROLE.ADMIN) > 0;
-    const mayExam = true;// grade < 16;
+    const mayExam = grade < 16;
     const authorized = !!userUid;
     
     return <div className="navigation">
@@ -52,4 +41,4 @@ const Navigation: FC<IProps & RouteComponentProps & PropsFromRedux> = ({ history
     </div>
 }
 
-export default withRouter(connector(Navigation));
+export default withRouter(Navigation);

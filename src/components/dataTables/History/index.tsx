@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import { PaginatorPageState } from 'primereact/paginator';
@@ -11,11 +11,11 @@ import { FETCH_STATE } from "../../../constants/data";
 import { fetchTableData } from "../../../reducers/actions/table";
 import { dateFormater } from "../../../helpers";
 import TextFilter from "../filterElemets/TextFilter";
+import { AppContext } from "../../../app/App";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.attempts;
-    const { userUid } = state.user.data;
-    return { data, page, total, pageSize, status, error, userUid, sort, filter }
+    return { data, page, total, pageSize, status, error, sort, filter }
 }
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
@@ -51,7 +51,6 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         pageSize,
         status,
         error,
-        userUid,
         fetch,
         clearData,
     } = props;
@@ -60,10 +59,12 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const [sort, setSort] = useState<DataTableSortParams>();
     const [loading, setLoading] = useState(false);
 
+    const { user } = useContext(AppContext);
+
     useEffect(() => {
-        if (userUid) fetch(Number(page), Number(pageSize), { sort, filter });
+        if (!!user.userUid) fetch(Number(page), Number(pageSize), { sort, filter });
         else clearData();
-    }, [userUid, sort, filter]);
+    }, [user, sort, filter]);
 
     useEffect(() => {
         setLoading(status === FETCH_STATE.LOADING);

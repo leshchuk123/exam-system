@@ -3,6 +3,7 @@ import { DataTableFilterParams } from "primereact/datatable";
 import { MultiSelect } from "primereact/multiselect";
 import { IDataAll } from "../../../../interfaces/data";
 import { list } from "../../../../reducers/api/table";
+import { isOK } from "../../../../helpers";
 
 interface Option {
     value: number,
@@ -36,8 +37,8 @@ const MultiSelectFilter: FC<IProps> = (props): JSX.Element => {
     useEffect(() => {
         if (collection) {
             list(collection, 1, 10000, {})
-                .then((response) => {
-                    if (response.status === 200 || response.status === 201) return response.json();
+                .then((res) => {
+                    if (isOK(res)) return res.json();
                 })
                 .then((json) => {
                     const data = json.data as IDataAll[];

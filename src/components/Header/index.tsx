@@ -1,28 +1,26 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { connect, ConnectedProps } from "react-redux";
+import { AppContext } from "../../app/App";
 import { IDataUser } from "../../interfaces/data";
 import { signOut } from "../../reducers/actions/auth";
 import { AppDispatch, RootState } from "../../store";
-
 import Button from "../ui/Button";
 
 import "./header.scss";
 
-const mapState = (state: RootState) => {
-    const user = state.user.data as IDataUser | undefined;
-    return { user };
-};
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
         signout: (uid: string) => signOut(uid, dispatch),
     }
 }
 
-const connector = connect(mapState, mapDispatch);
+const connector = connect(null, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const Header: FC<PropsFromRedux> = ({ user, signout }): JSX.Element => {
+const Header: FC<PropsFromRedux> = ({ signout }): JSX.Element => {
+    const { user } = useContext(AppContext);
+
     return <div className="header">
         <div className="title">
             <div className="title_text">

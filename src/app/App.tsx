@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { FC } from 'react';
+import { createContext, FC } from 'react';
 import { Route, Switch } from "react-router";
 import { connect, ConnectedProps } from 'react-redux';
 
@@ -19,6 +19,13 @@ import HistoryTable from "../components/dataTables/History";
 
 import RecordForm from "../components/forms/RecordForm";
 import ExamForm from '../components/forms/ExamForm';
+import { IDataUser } from '../interfaces/data';
+import { defaultUser } from '../reducers/user';
+
+interface IAppContext {
+    user: IDataUser;
+}
+export const AppContext = createContext<IAppContext>({ user: defaultUser });
 
 const mapState = (state: RootState) => {
     const { data, status, error } = state.user;
@@ -31,7 +38,9 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const App: FC<PropsFromRedux> = (props): JSX.Element => {
     const { data, status, error } = props;
 
-    return (
+    return (<AppContext.Provider value={{
+        user: data
+    }}>
         <div className="app_container">
             <Brand />
             <Header />
@@ -47,7 +56,7 @@ const App: FC<PropsFromRedux> = (props): JSX.Element => {
                 <Route path="/exam" exact component={ExamForm} />
             </Switch>
         </div>
-    );
+    </AppContext.Provider>);
 }
 
 export default connector(App);

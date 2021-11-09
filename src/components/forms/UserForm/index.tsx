@@ -10,7 +10,7 @@ import { Button } from 'primereact/button';
 
 import { IDataSpeciality, IDataUser } from "../../../interfaces/data";
 import { ROLES } from "../../../constants/data";
-import { comparator, range, translit } from "../../../helpers";
+import { comparator, isOK, range, translit } from "../../../helpers";
 import { add, get, list, update } from "../../../reducers/api/table";
 
 interface IProps {
@@ -44,10 +44,8 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
     const fetchSpec = () => {
         setFetchError(undefined);
         list("specialities", 1, 100, {})
-            .then(response => {
-                if (response.status === 200 || response.status === 201) {
-                    return response.json();
-                }
+            .then(res => {
+                if (isOK(res)) return res.json();
             })
             .then(json => {
                 setSpecialities(json.data)
@@ -61,10 +59,8 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
     const fetchData = (id: number) => {
         setDataError(undefined);
         get(collection, id)
-            .then(response => {
-                if (response.status === 200 || response.status === 201) {
-                    return response.json();
-                }
+            .then(res => {
+                if (isOK(res)) return res.json();
             })
             .then(json => {
                 setData(json.users);
@@ -81,10 +77,9 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
         setSaveError(undefined)
         const promise = data.id === undefined ? add : update;
         promise(collection, data)
-            .then(response => {
-                if (response.status === 200 || response.status === 201) {
+            .then(res => {
+                if (isOK(res)) 
                     props.history.replace(`/${collection}`);
-                }
             })
             .catch((err: Error | string) => {
                 const error = err instanceof Error ?
@@ -115,7 +110,7 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
     return <div className="form">
         <div className="record-form">
             {!!(dataError || fetchError || saveError) &&
-                <div className="error_msg flex-v gap-20">
+                <div className="message warn flex-v gap-20">
                 {
                     [dataError, fetchError, saveError]
                         .filter(msg => !!msg)
@@ -217,7 +212,7 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
                 />
                 <label htmlFor="accessDate">Дата последнего экзамена</label>
             </span>
-            <fieldset className="flex flex-center gap-20">
+            <fieldset className="flex flex-v-center gap-20">
                 <legend>Группы</legend>
                 {ROLES.map((role, i) => {
                     return <div className="flex gap-10 p-field-checkbox" key={uuidv4()}>
@@ -239,7 +234,7 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
                     </div>
                 })}
             </fieldset>
-            <fieldset className="flex flex-center gap-20">
+            <fieldset className="flex flex-v-center gap-20">
                 <Button label="Сохранить" className="p-button-success" onClick={doSave} disabled={!dirty} />
                 <Button label="Очистить" className="p-button-secondary" onClick={doReset} disabled={!dirty} />
                 <Button label="Отмена" className="p-button-secondary" onClick={doCancel} />

@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useContext, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import Table from "../DataTable";
@@ -13,12 +13,12 @@ import { rolesTemplate, specialityTemplate, userNameTemplate } from "../fieldsTe
 import TextFilter from "../filterElemets/TextFilter";
 import MultiSelectFilter from "../filterElemets/MultiSelectFilter";
 import BitwiseMulyiSelectFilter from "../filterElemets/BitwiseMulyiSelectFilter";
+import { AppContext } from "../../../app/App";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.users;
-    const { userUid } = state.user.data;
     return {
-        data, page, total, pageSize, status, error, userUid, sort, filter,
+        data, page, total, pageSize, status, error, sort, filter,
         specialities: state.specialities.data,
     }
 }
@@ -59,7 +59,6 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
         pageSize,
         status,
         error,
-        userUid,
         specialities,
         fetch,
         fetchSpecialities,
@@ -71,13 +70,15 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     const [sort, setSort] = useState<DataTableSortParams>();
     const [loading, setLoading] = useState(false);
 
+    const { user } = useContext(AppContext);
+
     useEffect(() => {
-        if (userUid) {
+        if (!!user.userUid) {
             fetch(Number(page), Number(pageSize), { sort, filter });
             fetchSpecialities();
         }
         else clearData();
-    }, [userUid, sort, filter]);
+    }, [user, sort, filter]);
 
     useEffect(() => {
         setLoading(status === FETCH_STATE.LOADING);

@@ -21,16 +21,16 @@ export const createServer = () => {
 };
 
 export const fetchDumpFromStorage = ():{dump: IDump, uids: { [key: string]: string }} => {
-    const dump = localStorage.getItem("exams_dump");
-    const uids = localStorage.getItem("exams_uids");
+    const dump = localStorage.getItem("exams:dump");
+    const uids = localStorage.getItem("exams:uids");
     return {
         dump: dump ? JSON.parse(dump) : null,
         uids: uids ? JSON.parse(uids) : null,
     }
 };
 export const saveDumpToStorage = (dump: IDump, uids: { [key: string]: string } | null = null) => {
-    localStorage.setItem("exams_dump", JSON.stringify(dump));
-    if (!!uids) localStorage.setItem("exams_uids", JSON.stringify(uids));
+    localStorage.setItem("exams:dump", JSON.stringify(dump));
+    if (!!uids) localStorage.setItem("exams:uids", JSON.stringify(uids));
 }
 
 export const collectionToArray = function<T>(coll:Collection<any>) {

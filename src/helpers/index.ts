@@ -1,5 +1,7 @@
 import { KeyboardEvent } from "react";
 
+export const isOK = (res: Response) => res.status === 200 || res.status === 201;
+
 const letters: { [key: string]: string } = {
     "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "yo",
     "ж": "zh", "з": "z", "и": "i", "й": "y", "к": "k", "л": "l", "м": "m",
@@ -50,6 +52,22 @@ export const shuffle = function<T>(arr: T[]): T[] {
         [res[i], res[j]] = [res[j], res[i]];
     }
     return res;
+}
+export const arrRemove = function <T>(arr: T[], v: T): T[] {
+    const index = arr.indexOf(v);
+    if (index !== -1)
+        arr.splice(index, 1);
+    return arr;
+};
+export const arrSwitch = function <T>(arr: T[], v: T): T[] {
+    const index = arr.indexOf(v);
+    if (index !== -1)
+        arr.splice(index, 1);
+    else arr.push(v);
+    return arr;
+};
+export const isIn = function <T>(arr: T[], v: T) {
+    return arr.indexOf(v) !== -1;
 }
 
 export const pad = (v: number, length = 2) => {

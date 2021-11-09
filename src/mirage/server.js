@@ -91,6 +91,7 @@ export function makeServer({ environment = 'test' }) {
                                 .filter(v => v.task == task.id)
                         )
                     );
+                    task.selected = [];
                 });
                 return tasks;
             })

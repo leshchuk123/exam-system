@@ -3,7 +3,7 @@ import { russianName } from 'russian_name';
 import { v4 as uuidv4 } from "uuid";
 import { LoremIpsum } from "lorem-ipsum";
 
-import { iterate, pad, range, rnd, rndArrItem, translit } from "../../helpers";
+import { iterate, pad, range, rnd, rndArrItem, shuffle, translit } from "../../helpers";
 import { IDataOption, IDataTask, IDataUser } from '../../interfaces/data';
 import { IDump, modes, names, specialities, users } from "./constants";
 
@@ -19,19 +19,36 @@ export const generateDump = () => {
         }
     });
 
-    const tasks: IDataTask[] = range(1, 50, (i: number) => ({
-        id: i + 1,
-        text: `Задача ${i + 1}. ${lorem.generateSentences(1)}`,
-        speciality: rnd(1, 3),
-        grade: rnd(1, 16),
-        mode: rnd(1, 3),
-    }));
+    debugger
+    let tasks: IDataTask[] = [];
+    let taskId = 0;
+    // генерация заданий: для грейдов с 8 по 16 и для всех трех специальностей
+    for (let grade = 8; grade < 17; grade++) {
+        for (let spec = 1; spec < 4; spec++) {
+            tasks = tasks.concat(range(1, rnd(15, 25), () => (
+                {
+                    id: ++taskId,
+                    text: `Задача ${taskId}. ${lorem.generateSentences(1)}`,
+                    speciality: spec,
+                    grade: grade,
+                    mode: rnd(1, 2),
+                }
+            )));
+        }
+    }
+    // перемешивание заданий в случайном порядке и установка идентификаторов
+    tasks = shuffle(tasks);
+    tasks.forEach((task, i) => { task.id = (i + 1) });
 
     const options: IDataOption[] = [];
+    // генерация вариантов ответов к заданиям
     tasks.forEach(task => {
         const { id, mode } = task;
+        // для вопросов с единственным ответом
         if (mode === 1) {
+            // количество вариантов ответов
             const times = rnd(3, 6);
+            // выбор правильного ответа
             const correct = rnd(0, times - 1);
             iterate((i) => {
                 options.push({
@@ -41,10 +58,15 @@ export const generateDump = () => {
                     correct: i === correct,
                 })
             }, times);
+        // для вопросов с множественными ответами
         } else if (mode === 2) {
+            // количество вариантов ответов
             const times = rnd(3, 6);
+            // массив [0, 1, 2, ... (times - 1)]
             const correct = range(0, times - 1);
+            // количество правильных ответов
             const correctCount = rnd(1, times);
+            // удаление из массива correct произвольных элементов
             while (correct.length > correctCount) {
                 correct.splice(rnd(0, correct.length - 1), 1);
             }
@@ -60,8 +82,8 @@ export const generateDump = () => {
             options.push({
                 id: options.length + 1,
                 task: id,
-                regEx: "\\d+"
-            })
+                regEx: lorem.generateWords(rnd(1, 3))
+            });
         }
     });
 
@@ -82,9 +104,9 @@ export const generateDump = () => {
                     lastName: name.surname,
                     email: `${login}@realize.dev`,
                     speciality: rnd(1, 3),
-                    grade: rnd(5, 10),
+                    grade: rnd(8, 16),
                     hiringDate: `${rnd(2017, 2020)}-${pad(rnd(1, 12))}-${pad(rnd(1, 28))}T21:00:00.000Z`,
-                    accessDate: "",
+                    accessDate: `2021-${pad(rnd(5, 10))}-${pad(rnd(1, 28))}T21:00:00.000Z`,
                     roles: 1,
                 }
                 uids[`${user.email}:${md5(login)}`] = String(user.userUid);

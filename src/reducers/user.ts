@@ -1,17 +1,18 @@
-import { IUserState, IUserReducer } from "../interfaces/data";
+import { IUserState, IUserReducer, IDataUser } from "../interfaces/data";
 import { FETCH_STATE } from "../constants/data";
 
-const initialState: IUserState = {
-    data: {
-        id: 0,
-        firstName: "",
-        lastName: "",
-        userUid: "",
-        hiringDate: "",
-        accessDate: "",
-        speciality: 0,
-        grade: 0,
-    },
+export const defaultUser: IDataUser = {
+    id: 0,
+    firstName: "",
+    lastName: "",
+    userUid: "",
+    hiringDate: "",
+    accessDate: "",
+    speciality: 0,
+    grade: 0,
+};
+export const initialState: IUserState = {
+    data: defaultUser,
     status: FETCH_STATE.NONE,
     error: ""
 };

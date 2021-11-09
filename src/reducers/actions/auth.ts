@@ -4,14 +4,14 @@ import {
     signOut as signOutApi
 } from "../api/auth";
 import { AppDispatch } from "../../store";
-import { errToStr } from "../../helpers";
+import { errToStr, isOK } from "../../helpers";
 
 export const auth = (email: string, password: string, dispatch: AppDispatch) => {
     dispatch({ type: "user_fetch_start" });
 
     authApi(email, password)
-        .then(response => {
-            if (response.status === 200 || response.status === 201) return response.json();
+        .then(res => {
+            if (isOK(res)) return res.json();
             else return null;
         })
         .then((json: { users: IDataUser }) => {
@@ -26,8 +26,8 @@ export const signOut = (uid: string, dispatch: AppDispatch) => {
     dispatch({ type: "user_fetch_start" });
 
     signOutApi(uid)
-        .then(response => {
-            if (response.status === 200 || response.status === 201) return response.json();
+        .then(res => {
+            if (isOK(res)) return res.json();
             else return null;
         })
         .then(() => {

@@ -7,12 +7,43 @@ body {
     margin: 0;
 }
 
-.flex {display: flex;}
-.flex-center {align-items: center;}
-.flex-v {display: flex; flex-direction: column;}
+.flex {
+    display: flex;
+    &.flex-v-center {align-items: center;}
+    &.flex-h-center {justify-content: center;}
+}
+.flex-v {
+    display: flex; 
+    flex-direction: column;
+    &.flex-v-center {justify-content: center;}
+    &.flex-h-center {align-items: center;}
+}
+.flex, .flex-v {
+    &.flex-center {
+        align-items: center;
+        justify-content: center;
+    }
+}
 .grid {display: grid;}
 .gap-10 {grid-gap: 12px; gap: 12px;}
 .gap-20 {grid-gap: 24px; gap: 24px;}
+
+.message {
+    background: white;
+    border: 2px solid #bbb;
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+
+    &.info {
+        background-color: rgb(196, 218, 195);
+        border-color: #236428;
+    }
+    &.warn {
+        background-color: #ff7a0033;
+        border-color: #ff2800;
+    }
+}
 
 .app_container {
     display: grid;
@@ -49,10 +80,4 @@ fieldset {
 }
 legend {
     padding: 0 20px;
-}
-.error_msg {
-    background-color: #ff7a0033;
-    border: 2px solid #ff2800;
-    border-radius: 8px;
-    padding: 24px;
 }

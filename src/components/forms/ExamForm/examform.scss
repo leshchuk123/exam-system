@@ -1,0 +1,17 @@
+.task-title {
+    font-size: 2em;
+    font-weight: 700;
+}
+.task-text {
+    font-size: 1.2em;
+}
+.p-field-radiobutton, .p-field-checkbox {
+    display: flex;
+    .p-radiobutton, .p-checkbox {
+        margin-right: 12px;
+        display: inline-block;
+    }
+    label {
+        display: inline-block;
+    }
+}

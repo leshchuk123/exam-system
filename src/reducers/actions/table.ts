@@ -1,6 +1,6 @@
 import { IListOptions, IDataTableAPIResponse, IDataTask, IDataAny } from "../../interfaces/data";
 import { AppDispatch } from "../../store";
-import { errToStr } from "../../helpers";
+import { errToStr, isOK } from "../../helpers";
 import { del, get, list } from "../api/table";
 
 const pluralize = require('pluralize');
@@ -16,8 +16,8 @@ export const fetchTableData = (
     localStorage.setItem(`exams:table:${table}`, JSON.stringify({ page, pageSize, options }));
 
     list(table, page, pageSize, options)
-        .then(response => {
-            if (response.status === 200 || response.status === 201) return response.json();
+        .then(res => {
+            if (isOK(res)) return res.json();
             else return null;
         })
         .then((json) => {
@@ -39,7 +39,7 @@ export const deleteTableRecord = (table: string, id: number, dispatch: AppDispat
     dispatch({ type: `${table}_delete_start` });
     
     del(table, id)
-        .then(response => {
+        .then(res => {
             const {page = 1, pageSize = 20, options = {}} = JSON.parse(String(localStorage.getItem(`exams:table:${table}`)));
             return fetchTableData(table, page, pageSize, options, dispatch);
         });
@@ -49,8 +49,8 @@ export const getTableRecord = (table: string, id: number, dispatch: AppDispatch)
     dispatch({ type: `${pluralize.singular(table)}_fetch_start` });
     
     get(table, id)
-        .then(response => {
-            if (response.status === 200 || response.status === 201) return response.json();
+        .then(res => {
+            if (isOK(res)) return res.json();
             else return null;
         })
         .then((json) => {
