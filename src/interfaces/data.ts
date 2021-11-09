@@ -18,11 +18,11 @@ export interface IDataSpeciality {
     name: string
 }
 export interface IDataTask {
-    id?: number
-    text?: string
-    speciality?: number | IDataSpeciality
-    grade?: number
-    mode?: number | IDataMode
+    id: number
+    text: string
+    speciality: number | IDataSpeciality
+    grade: number
+    mode: number | IDataMode
 }
 export interface IDataMode {
     id: number
@@ -48,7 +48,6 @@ export interface IDataAnswer {
     task?: number | IDataTask
     option?: number | IDataOption
 }
-export type IDataAny = IDataAnswer | IDataAttempt | IDataMode | IDataOption | IDataSpeciality | IDataTask | IDataUser | {[key: string]:string};
 export type IDataAll = IDataAnswer & IDataAttempt & IDataMode & IDataOption & IDataSpeciality & IDataTask & IDataUser & {[key: string]:string};
 
 export interface IUserReducer {

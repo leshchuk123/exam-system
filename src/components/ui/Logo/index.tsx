@@ -1,7 +1,7 @@
 import React, { FC, ReactElement } from "react";
 import { IClickableElement, IUIComponent } from "../../../interfaces/components";
 
-import { clearJoin } from "../../../helpers";
+import { clearJoin } from "../../../helpers/array";
 import logo from "../../../assets/images/sokolov-logo_ru.svg";
 
 const Logo: FC<IUIComponent & IClickableElement> = (props): ReactElement => {

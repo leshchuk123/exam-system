@@ -1,5 +1,5 @@
 import { createServer, Model } from "miragejs"
-import { rndArrSlice, shuffle } from "../helpers";
+import { rndArrSlice, shuffle } from "../helpers/array";
 import { collectionToArray, sortCollection, slicePage, filterCollection, saveDumpToStorage } from "./mocks/helpers";
 const pluralize = require('pluralize')
 

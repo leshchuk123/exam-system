@@ -1,6 +1,6 @@
 import React, { CSSProperties, FC, MouseEventHandler } from "react";
 import { Link } from "react-router-dom";
-import { clearJoin } from "../../helpers";
+import { clearJoin } from "../../helpers/array";
 
 import "./navlink.scss";
 

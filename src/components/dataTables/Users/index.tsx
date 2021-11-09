@@ -8,7 +8,8 @@ import { DataTableFilterMatchModeType, DataTableSortParams } from 'primereact/da
 import { deleteTableRecord, fetchTableData } from "../../../reducers/actions/table";
 import { IDataAll, IDataUser, IListOptions } from "../../../interfaces/data";
 import { FETCH_STATE, ROLE } from "../../../constants/data";
-import { dateFormater, range } from "../../../helpers";
+import { range } from "../../../helpers";
+import { dateFormater } from "../../../helpers/format";
 import { rolesTemplate, specialityTemplate, userNameTemplate } from "../fieldsTemplates";
 import TextFilter from "../filterElemets/TextFilter";
 import MultiSelectFilter from "../filterElemets/MultiSelectFilter";

@@ -4,7 +4,8 @@ import {
     signOut as signOutApi
 } from "../api/auth";
 import { AppDispatch } from "../../store";
-import { errToStr, isOK } from "../../helpers";
+import { isOK } from "../../helpers";
+import { errToStr } from "../../helpers/format";
 
 export const auth = (email: string, password: string, dispatch: AppDispatch) => {
     dispatch({ type: "user_fetch_start" });

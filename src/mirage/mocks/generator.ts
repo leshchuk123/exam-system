@@ -3,7 +3,9 @@ import { russianName } from 'russian_name';
 import { v4 as uuidv4 } from "uuid";
 import { LoremIpsum } from "lorem-ipsum";
 
-import { iterate, pad, range, rnd, rndArrItem, shuffle, translit } from "../../helpers";
+import { iterate, range, rnd,  } from "../../helpers";
+import { rndArrItem, shuffle } from "../../helpers/array";
+import { pad, translit } from "../../helpers/format";
 import { IDataOption, IDataTask, IDataUser } from '../../interfaces/data';
 import { IDump, modes, names, specialities, users } from "./constants";
 

@@ -6,11 +6,11 @@ import { Button } from 'primereact/button';
 import { v4 as uuidv4 } from "uuid";
 
 import "./datatable.scss";
-import { IDataAll, IDataAny } from "../../../interfaces/data";
+import { IDataAll } from "../../../interfaces/data";
 import { Link } from "react-router-dom";
 
 interface IDataTableColumnProps extends ColumnProps {
-    body?: (rowData: IDataAny) => string
+    body?: (rowData: IDataAll) => string
     showApplyButton?: boolean
 }
 interface IProps extends DataTableProps {

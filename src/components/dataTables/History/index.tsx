@@ -9,7 +9,7 @@ import Table from "../DataTable";
 import { IDataAttempt, IDataUser, IListOptions } from "../../../interfaces/data";
 import { FETCH_STATE } from "../../../constants/data";
 import { fetchTableData } from "../../../reducers/actions/table";
-import { dateFormater } from "../../../helpers";
+import { dateFormater } from "../../../helpers/format";
 import TextFilter from "../filterElemets/TextFilter";
 import { AppContext } from "../../../app/App";
 

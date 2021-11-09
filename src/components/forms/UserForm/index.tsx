@@ -10,7 +10,8 @@ import { Button } from 'primereact/button';
 
 import { IDataSpeciality, IDataUser } from "../../../interfaces/data";
 import { ROLES } from "../../../constants/data";
-import { comparator, isOK, range, translit } from "../../../helpers";
+import { comparator, isOK, range } from "../../../helpers";
+import { translit } from "../../../helpers/format";
 import { add, get, list, update } from "../../../reducers/api/table";
 
 interface IProps {

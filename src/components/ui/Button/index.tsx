@@ -1,5 +1,5 @@
 import React, { FC, ReactElement } from "react";
-import { clearJoin } from "../../../helpers";
+import { clearJoin } from "../../../helpers/array";
 import { IClickableElement, IUIComponent } from "../../../interfaces/components";
 
 import Icon, { ICON_SIZE } from "../Icon";

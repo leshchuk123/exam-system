@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, useState } from "react";
 
-import { clearJoin } from "../../../helpers";
+import { clearJoin } from "../../../helpers/array";
 
 import { IUIComponent } from "../../../interfaces/components";
 

@@ -111,9 +111,15 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                     return (
                         <TabPanel key={uuidv4()} header={<span style={{ fontWeight: 700 }}>{i+1}</span>}>
                             <div className="message flex-v gap-20">
-                                {/* <div className="task-title">Задание {i + 1}</div> */}
+                                <div className="task-title">Задание {i + 1}</div>
                                 <div className="task-text">{task.text}</div>
-                                <Options task={task} index={i} onChange={onOptionChange} />
+                                <Options 
+                                    options={task.options} 
+                                    selected={task.selected} 
+                                    mode={Number(task.mode)} 
+                                    index={i} 
+                                    onChange={onOptionChange} 
+                                />
                             </div>
                         </TabPanel>
                     );

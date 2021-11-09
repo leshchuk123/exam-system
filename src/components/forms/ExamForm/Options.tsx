@@ -1,50 +1,64 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { ITask } from ".";
 
 import { RadioButton, RadioButtonChangeParams, RadioButtonProps } from 'primereact/radiobutton';
 import { Checkbox, CheckboxChangeParams, CheckboxProps } from 'primereact/checkbox';
-import { arrSwitch, comparator, isIn } from "../../../helpers";
+import { comparator } from "../../../helpers";
+import { arrAddUnique, arrRemove, isIn } from "../../../helpers/array";
+import { IDataMode, IDataOption } from "../../../interfaces/data";
 
 export interface OptionsChangeHandler {
     (index: number, result: number[], correct: boolean): void
 }
 interface IProps {
     index: number;
-    task: ITask;
+    options: IDataOption[];
+    selected: number[];
     onChange: OptionsChangeHandler
+    mode: IDataMode | number;
 }
 const Options:FC<IProps> = (props):JSX.Element => {
-    const { task, index, onChange } = props;
-    const correct = task.options.filter(v => v.correct).map(v => Number(v.id)).sort();
-    const [selected, setSelected] = useState(task.selected);
+    const { options, index, onChange, mode } = props;
+    const correct = useRef(options.filter(v => v.correct).map(v => Number(v.id)).sort());
+    const [sel, setSelected] = useState<number[]>([]);
 
     const onControlChange = (e: RadioButtonChangeParams | CheckboxChangeParams) => {
-        debugger
-        arrSwitch(selected, Number(e.value)).sort();
-        onChange(index, selected, comparator(correct, selected));
-        setSelected(selected);
+        let result: number[];
+        if (e.target.name === "radio") {
+            result = [e.value];
+        } else {
+            result = (e.checked ? 
+                arrAddUnique<number>(sel, Number(e.value)) :
+                arrRemove(sel, Number(e.value))
+            ).sort();
+        }
+        const isCorrect = comparator(correct.current, result);
+        setSelected(result)
+        onChange(index, result, isCorrect);
     };
-    
+
+    useEffect(() => {
+        setSelected(props.selected);
+    }, []);
+
     return <>
-        {task.options.map((op, i) => {
+        {options.map((op, i) => {
             let field, cls;
-            if (task.mode === 1) {
+            if (mode === 1) {
                 cls = "p-field-radiobutton";
                 field = <RadioButton
-                    inputId={`option${i}`}
-                    name={`option`}
-                    value={op.id}
+                    name="radio"
+                    value={Number(op.id)}
                     onChange={onControlChange}
-                    checked={isIn(selected, Number(op.id))}
+                    checked={isIn(sel, Number(op.id))}
                 />
-            } else {
+            } else if (mode === 2) {
                 cls = "p-field-checkbox";
                 field = <Checkbox
-                    inputId={`option${i}`}
-                    name={`option${i}`}
-                    value={op.id}
+                    name={`check-${i}`}
+                    value={Number(op.id)}
                     onChange={onControlChange}
-                    checked={isIn(selected, Number(op.id))}
+                    checked={isIn(sel, Number(op.id))}
                 />
             }
             return <div className={cls} key={`option${i}`}>

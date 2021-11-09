@@ -2,7 +2,8 @@ import React, { FC, CSSProperties, ReactElement, useRef, KeyboardEvent, Keyboard
 import { v4 as uuidv4 } from 'uuid';
 import IMask, { InputMask, AnyMaskedOptions} from "imask";
 
-import { eventKey, clearJoin } from "../../../../helpers";
+import { eventKey } from "../../../../helpers";
+import { clearJoin } from "../../../../helpers/array";
 
 import "./inputs.scss";
 

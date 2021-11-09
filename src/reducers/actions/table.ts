@@ -1,6 +1,7 @@
-import { IListOptions, IDataTableAPIResponse, IDataTask, IDataAny } from "../../interfaces/data";
+import { IListOptions } from "../../interfaces/data";
 import { AppDispatch } from "../../store";
-import { errToStr, isOK } from "../../helpers";
+import { isOK } from "../../helpers";
+import { errToStr } from "../../helpers/format";
 import { del, get, list } from "../api/table";
 
 const pluralize = require('pluralize');
