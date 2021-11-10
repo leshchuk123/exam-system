@@ -15,3 +15,15 @@
         display: inline-block;
     }
 }
+.task-tab {
+    padding: 8px;
+    user-select: none;
+    &.done {
+        background-color: darkgreen;
+        color: whitesmoke
+    }
+}
+.task-timer {
+    font-size: 1.5em;
+    font-weight: 700;
+}

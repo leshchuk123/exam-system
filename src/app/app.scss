@@ -23,6 +23,15 @@ body {
         align-items: center;
         justify-content: center;
     }
+    &.flex-between {
+        justify-content: space-between;
+    }
+    &.flex-around {
+        justify-content: space-around;
+    }
+    &.flex-evenly {
+        justify-content: space-evenly;
+    }
 }
 .grid {display: grid;}
 .gap-10 {grid-gap: 12px; gap: 12px;}

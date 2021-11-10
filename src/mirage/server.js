@@ -48,11 +48,13 @@ export function makeServer({ environment = 'test' }) {
                 this.put(`/${name}`, (schema, request) => {
                     const data = JSON.parse(request.requestBody)
                     const collection = schema[name].all();
-                    const newId = 1 + Number(collection.models.sort((a, b) => b.id - a.id)[0].attrs.id);
+                    const newId = collection.models.length === 0 ? 1 :
+                        collection.models.length === 1 ? 1 + collection.models[0].attrs.id :
+                        1 + Number(collection.models.sort((a, b) => b.id - a.id)[0].attrs.id);
                     data.id = newId;
                     collection.update(data);
                     saveDumpToStorage(window.server.db.dump());
-                    return true;
+                    return data;
                 });
 
                 this.patch(`/${name}`, (schema, request) => {
@@ -60,7 +62,7 @@ export function makeServer({ environment = 'test' }) {
                     const collection = schema[name].all();
                     collection.update(data);
                     saveDumpToStorage(window.server.db.dump());
-                    return true;
+                    return data;
                 });
 
                 this.delete(`/${name}/:id`, (schema, request) => {
