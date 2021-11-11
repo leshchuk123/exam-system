@@ -239,6 +239,9 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                                     onChange={onOptionChange} 
                                 />
                             </div>
+                            {/* <pre>
+                                {JSON.stringify(task.options,null,2)}
+                            </pre> */}
                         </TabPanel>
                     );
                 })}

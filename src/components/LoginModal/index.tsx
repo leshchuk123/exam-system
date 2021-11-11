@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
 
 import Modal from "../Modal";
-import Logo from "../ui/Logo";
 import Button, {BTN_SIZE, BTN_TYPE} from "../ui/Button";
 import EmailInput from "../ui/inputs/EmailInput";
 import PasswordInput from "../ui/inputs/PasswordInput";
@@ -10,6 +9,7 @@ import { IValidator } from "../ui/inputs/TextInput";
 import { auth } from "../../reducers/actions/auth";
 import { AppDispatch } from "../../store";
 import { connect } from "react-redux";
+import Brand from "../Brand";
 
 export interface OwnProps {
     open?: boolean
@@ -51,7 +51,7 @@ const LoginModal:FC<Props> = (props): JSX.Element => {
 
     return <Modal open={open} closable={false} style={{width: 600, height: 400}}>
         <div className="modal_header">
-            <Logo />
+            <Brand />
         </div>
         <div className="modal_body">
             <div className="modal_content">
