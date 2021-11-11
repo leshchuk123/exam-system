@@ -148,7 +148,7 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
 
     const doSave = () => {
         setTimerCommand(COMMAND.STOP);
-        
+
         const result: number = tasks.map(v => v.correct ? 1 : 0)
             .reduce((prev: number, next: number) => prev + next, 0);
         
@@ -162,7 +162,6 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                 if (isOK(res)) return res.json();
             })
             .then(json => {
-                debugger
                 const id = json.id;
                 const answers: IDataAnswer[] = [];
                 tasks.forEach(task => {
@@ -179,11 +178,10 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                         });
                     }
                 });
-                const promises: Promise<Response>[] = answers.map(answer => add("answers", answer));
-                Promise.all(promises).then(result => {
-                    debugger
-                    setState(STATE.RESOLVED);
-                });
+                answers.forEach(async answer => {
+                    await add("answers", answer);
+                })
+                setState(STATE.RESOLVED);
         })
     }
 

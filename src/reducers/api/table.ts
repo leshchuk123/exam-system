@@ -1,4 +1,5 @@
 import { IListOptions } from "../../interfaces/data";
+import { fetchHistory } from "./exams";
 
 const defaults: RequestInit = {
     method: "GET",
@@ -9,15 +10,18 @@ const defaults: RequestInit = {
 
 // постраничное получение данных из указанной таблицы с опцинальной сортировкой и фильтрацией
 export const list = function (table: string, page: number, pageSize: number, options: IListOptions) {
-    return fetch(`/api/${table}`, {
-        ...defaults,
-        method: "POST",
-        body: JSON.stringify({
-            page,
-            pageSize,
-            options,
-        }),
-    });
+    if (table === "attempts")
+        return fetchHistory(page, pageSize, options);
+    else 
+        return fetch(`/api/${table}`, {
+            ...defaults,
+            method: "POST",
+            body: JSON.stringify({
+                page,
+                pageSize,
+                options,
+            }),
+        });
 };
 // получение записи по идентификатору из указанной таблицы
 export const get = function(table: string, id: number) {

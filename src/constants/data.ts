@@ -28,3 +28,10 @@ export const MS = {
     DAY: 86400000,
     WEEK: 604800000,
 }
+export const COLOR = {
+    success: "#689F38",
+    info: "#0288D1",
+    warning: "#FBC02D",
+    help: "#9C27B0",
+    danger: "#D32F2F",
+}

@@ -76,10 +76,13 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
     useEffect(() => {
         if (!!user.userUid) {
             fetch(Number(page), Number(pageSize), { sort, filter });
-            fetchSpecialities();
         }
         else clearData();
     }, [user, sort, filter]);
+
+    useEffect(() => {
+        fetchSpecialities();
+    }, []);
 
     useEffect(() => {
         setLoading(status === FETCH_STATE.LOADING);

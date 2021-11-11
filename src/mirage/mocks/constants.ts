@@ -18,11 +18,19 @@ export const modes: IData.IDataMode[] = [
 ];
 
 export const specialities: IData.IDataSpeciality[] = [
-    { id: 0, name: "Не указано" },
-    { id: 1, name: "Фронтэнд" },
-    { id: 2, name: "Бекэнд" },
-    { id: 3, name: "Тестирование" },
+    { id: 1, name: "Не указано" },
+    { id: 2, name: "Фронтэнд" },
+    { id: 3, name: "Бекэнд" },
+    { id: 4, name: "Тестирование" },
 ];
+
+export const attempts: IData.IDataAttempt[] = [
+    { id: 0 }
+]
+
+export const answers: IData.IDataAnswer[] = [
+    { id: 0 }
+]
 
 export const users: IData.IDataUser[] = [
     {
@@ -31,37 +39,23 @@ export const users: IData.IDataUser[] = [
         firstName: "Андрей",
         lastName: "Лещук",
         email: "leshchuk@front.ru",
-        speciality: 1,
+        speciality: 2,
         grade: 16,
         hiringDate: "2020-12-22T21:00:00.000Z",
         accessDate: "",
         roles: 3,
     },
-    {
-        id: 2,
-        userUid: "626dfb82-1023-41c1-9966-751b03d535f2",
-        firstName: "Владислав",
-        lastName: "Семакин",
-        email: "vladislav.semakin@realize.dev",
-        speciality: 1,
-        grade: 10,
-        hiringDate: "2021-02-28T21:00:00.000Z",
-        accessDate: "",
-        roles: 1,
-    },
-    {
-        id: 3,
-        userUid: "28b2226f-e55e-4b39-85e7-1c482c16dbb4",
-        firstName: "Дмитрий",
-        lastName: "Дубенецкий",
-        email: "dmitry.dubenetsky@realize.dev",
-        speciality: 0,
-        grade: 0,
-        hiringDate: "2018-01-01T21:00:00.000Z",
-        accessDate: "",
-        roles: 7,
-    },
 ];
+
+export const RELS = {
+    "user": "users",
+    "reviewer": "users",
+    "speciality": "specialities",
+    "task": "tasks",
+    "option": "options",
+    "mode": "modes",
+    "attempt": "attempts",
+}
 
 export const names = {
     male: [

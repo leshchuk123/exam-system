@@ -1,17 +1,19 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
-import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableFilterMatchModeType, DataTableSortParams } from 'primereact/datatable';
 
+import { PaginatorPageState } from 'primereact/paginator';
+import { DataTableFilterMatchModeType, DataTableSortParams, DataTable } from 'primereact/datatable';
+import { Column } from "primereact/column";
+
+import { AppContext } from "../../../app/App";
 import Table from "../DataTable";
 
 import { IDataAttempt, IDataUser, IListOptions } from "../../../interfaces/data";
-import { FETCH_STATE } from "../../../constants/data";
+import { COLOR, FETCH_STATE } from "../../../constants/data";
 import { fetchTableData } from "../../../reducers/actions/table";
 import { dateFormater } from "../../../helpers/format";
 import TextFilter from "../filterElemets/TextFilter";
-import { AppContext } from "../../../app/App";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.attempts;
@@ -58,6 +60,8 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const [filter, setFilter] = useState<IFilters>(defFilter);
     const [sort, setSort] = useState<DataTableSortParams>();
     const [loading, setLoading] = useState(false);
+    const [expandedRows, setExpandedRows] = useState<any[]>([]);
+    const [expandedSubRows, setExpandedSubRows] = useState<any[]>([]);
 
     const { user } = useContext(AppContext);
 
@@ -82,18 +86,67 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
 
     const userNameTemplate = (record: IDataAttempt): string => {
         const user = record.user as IDataUser;
-        return `${user.firstName} ${user.lastName}`;
+        return user ? `${user?.firstName} ${user?.lastName}` : "";
     }
     const reviewerNameTemplate = (record: IDataAttempt): string => {
         const user = record.reviewer as IDataUser;
-        return `${user.firstName} ${user.lastName}`;
+        return user ? `${user?.firstName} ${user?.lastName}` : "";
+    }
+    const taskResultTemplate = (record: any) => {
+        let result = true;
+        record.options?.forEach((op: any) => {
+            debugger;
+            result = result && op.correct;
+        })
+        return result ? successIcon : errorIcon;
+    };
+    const successIcon = <i className="pi pi-check-circle" style={{ color: COLOR.success }} />;
+    const errorIcon = <i className="pi pi-times-circle" style={{ color: COLOR.danger }} />;
+    const optionResultTemplate = (record: any) => {
+        return record.correct ? successIcon : errorIcon;
+    }
+    const rowExpansionTemplate = (data: any) => {
+        return (
+            <div className="tasks-subtable">
+                <h5>Вопросы:</h5>
+                <DataTable
+                    value={data.tasks}
+                    expandedRows={expandedSubRows}
+                    onRowToggle={(e) => {
+                        setExpandedSubRows(e.data)
+                    }}
+                    rowExpansionTemplate={rowExpansionSubTemplate}
+                >
+                    <Column expander style={{width: "3em"}} />
+                    <Column field="text" header="Текст задания" />
+                    <Column field="date" body={taskResultTemplate} style={{width: "3em"}} />
+                </DataTable>
+            </div>
+        );
+    }
+    const rowExpansionSubTemplate = (data: any) => {
+        console.log(data);
+        debugger
+        return <DataTable value={data.options}>
+            <Column field="text" header="Ответы" />
+            <Column field="date" body={optionResultTemplate} style={{width: "3em"}} />
+        </DataTable>
     }
     return <Table
         title="История тестирования"
         collection="attempts"
         records={data}
         editable={false}
+        expandedRows={expandedRows}
+        onRowToggle={(e) => {
+            setExpandedRows(e.data)
+        }}
+        rowExpansionTemplate={rowExpansionTemplate}
         columns={[
+            {
+                expander: true,
+                style: {width: "3em"}
+            },
             {
                 field: "user",
                 header: "Экзаменуемый",

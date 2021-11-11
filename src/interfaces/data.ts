@@ -50,6 +50,12 @@ export interface IDataAnswer {
 }
 export type IDataAll = IDataAnswer & IDataAttempt & IDataMode & IDataOption & IDataSpeciality & IDataTask & IDataUser & {[key: string]:string};
 
+export interface IHistoryItem extends IDataAttempt {
+    tasks: (IDataTask & {
+        option: IDataOption
+    })[]
+}
+
 export interface IUserReducer {
     (
         state?: IUserState, 

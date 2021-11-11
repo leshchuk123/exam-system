@@ -7,7 +7,7 @@ import { iterate, range, rnd,  } from "../../helpers";
 import { rndArrItem, shuffle } from "../../helpers/array";
 import { pad, translit } from "../../helpers/format";
 import { IDataOption, IDataTask, IDataUser } from '../../interfaces/data';
-import { IDump, modes, names, specialities, users } from "./constants";
+import { IDump, modes, names, specialities, users, attempts, answers } from "./constants";
 
 export const generateDump = () => {
     const lorem = new LoremIpsum();
@@ -21,7 +21,6 @@ export const generateDump = () => {
         }
     });
 
-    debugger
     let tasks: IDataTask[] = [];
     let taskId = 0;
     // генерация заданий: для грейдов с 8 по 16 и для всех трех специальностей
@@ -105,7 +104,7 @@ export const generateDump = () => {
                     firstName: name.name,
                     lastName: name.surname,
                     email: `${login}@realize.dev`,
-                    speciality: rnd(1, 3),
+                    speciality: rnd(2, 4),
                     grade: rnd(8, 16),
                     hiringDate: `${rnd(2017, 2020)}-${pad(rnd(1, 12))}-${pad(rnd(1, 28))}T21:00:00.000Z`,
                     accessDate: `2021-${pad(rnd(5, 10))}-${pad(rnd(1, 28))}T21:00:00.000Z`,
@@ -117,6 +116,8 @@ export const generateDump = () => {
         ],
         tasks,
         options,
+        attempts,
+        answers,
     }
     return {dump, uids};
 }
