@@ -47,7 +47,7 @@ const App: FC<PropsFromRedux> = (props): JSX.Element => {
             <Navigation />
             <LoginModal open={!data?.userUid && status !== FETCH_STATE.LOADING} error={String(error)} />
             <Switch>
-                <Route path="/" exact component={UsersTable} />
+                <Route path="/" exact component={HistoryTable} />
                 <Route path="/:collection/edit/:id" component={RecordForm} />
                 <Route path="/:collection/new" component={RecordForm} />
                 <Route path="/history" exact component={HistoryTable} />

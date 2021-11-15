@@ -18,7 +18,7 @@ export interface IDataSpeciality {
     name: string
 }
 export interface IDataTask {
-    id: number
+    id?: number
     text: string
     speciality: number | IDataSpeciality
     grade: number

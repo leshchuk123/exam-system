@@ -1,4 +1,5 @@
 import { KeyboardEvent } from "react";
+import { IDataAll } from "../interfaces/data";
 
 export const isOK = (res: Response) => res.status === 200 || res.status === 201;
 
@@ -77,3 +78,8 @@ export const comparator = (v1: any, v2: any, strict = true): boolean => {
     }
     return false;
 };
+
+export const getId = (data: any) => {
+    if (typeof data === "object") return data.id;
+    return data;
+}

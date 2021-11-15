@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { withRouter , RouteComponentProps } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 
@@ -11,13 +11,43 @@ import { Button } from 'primereact/button';
 import { IDataSpeciality, IDataUser } from "../../../interfaces/data";
 import { ROLES } from "../../../constants/data";
 import { comparator, isOK, range } from "../../../helpers";
-import { translit } from "../../../helpers/format";
+import { errToStr, translit } from "../../../helpers/format";
 import { add, get, list, update } from "../../../reducers/api/table";
+import { connect, ConnectedProps } from "react-redux";
+import { AppDispatch, RootState } from "../../../store";
+import { fetchTableData } from "../../../reducers/actions/table";
 
-interface IProps {
+interface OwnProps {
     id?: number
 }
 
+const mapState = (state: RootState, props: OwnProps) => {
+    const user = state.users.data.filter(v => v.id === props.id)[0];
+    return {
+        user,
+        specialities: state.specialities.data,
+        // modes: state.modes.data,
+    }
+}
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        fetchSpecialities: () => fetchTableData("specialities", 1, 100, {}, dispatch),
+        // fetchModes: () => fetchTableData("modes", 1, 100, {}, dispatch),
+    }
+}
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface IIsFetching {
+    data: boolean
+    specialities: boolean
+}
+interface IErrors {
+    data?: string
+    specialities?: string
+    save?: string
+}
 const defaults: IDataUser = {
     userUid: uuidv4(),
     firstName: "",
@@ -29,97 +59,91 @@ const defaults: IDataUser = {
     accessDate: undefined,
     roles: 1,
 };
+const defFetchingState = {
+    data: false,
+    specialities: false,
+}
 const GRADES = range(1, 16, (i: number) => ({ value: i, text: `${i} грейд` }));
 
 const collection = "users";
 
-const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
-    const [specialities, setSpecialities] = useState<IDataSpeciality[]>([]);
-    const [dataError, setDataError] = useState<string>();
-    const [fetchError, setFetchError] = useState<string>();
-    const [saveError, setSaveError] = useState<string>();
-    const [data, setData] = useState<IDataUser>(defaults);
-    const [initials, setInitials] = useState<IDataUser>({ ...defaults });
+const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): JSX.Element => {
+    const {
+        id,
+        user,
+        specialities,
+        fetchSpecialities,
+    }=props
+    const [errors, setErrors] = useState<IErrors>({});
+    const [fetching, setFetching] = useState<IIsFetching>(defFetchingState);
     const [dirty, setDirty] = useState(false);
 
-    const fetchSpec = () => {
-        setFetchError(undefined);
-        list("specialities", 1, 100, {})
-            .then(res => {
-                if (isOK(res)) return res.json();
-            })
-            .then(json => {
-                setSpecialities(json.data)
-            })
-            .catch((err: Error | string) => {
-                const error = err instanceof Error ?
-                    `${err.name}: ${err.message}` : err;
-                setFetchError(error);
-            })
-    }
-    const fetchData = (id: number) => {
-        setDataError(undefined);
-        get(collection, id)
-            .then(res => {
-                if (isOK(res)) return res.json();
-            })
-            .then(json => {
-                setData(json.users);
-                setInitials({ ...json.users });
-            })
-            .catch((err: Error | string) => {
-                const error = err instanceof Error ?
-                    `${err.name}: ${err.message}` : err;
-                setDataError(error);
-            });
-    };
+    const [data, setData] = useState<IDataUser>({ ...defaults, ...(user || {}) });
+    const initials = useRef<IDataUser>({ ...defaults, ...(user || {}) });
+
+    useEffect(() => {
+        if (!specialities.length && !fetching.specialities && fetchSpecialities) {
+            setFetching({ ...fetching, specialities: true });
+            fetchSpecialities();
+        } else if (specialities.length) {
+            setFetching({ ...fetching, specialities: false });
+        }
+    }, [specialities, fetching, fetchSpecialities]);
+
+    useEffect(() => {
+        if (id && !data && !fetching.data) {
+            setFetching({ ...fetching, data: true });
+            get(collection, id)
+                .then(res => {
+                    if (isOK(res)) return res.json();
+                })
+                .then(json => {
+                    setData(json);
+                })
+                .catch(err => {
+                    setErrors({ ...errors, data: errToStr(err) });
+                })
+                .finally(() => {
+                    setFetching({ ...fetching, data: true });
+                });
+        }
+    }, [id, data, fetching]);
+
+    useEffect(() => {
+        const isSame = comparator(data, initials.current, false);
+        setDirty(!isSame);
+    }, [data, initials]);
 
     const doSave = () => {
-        setSaveError(undefined)
+        setErrors({ ...errors, data: undefined });
         const promise = data.id === undefined ? add : update;
         promise(collection, data)
             .then(res => {
                 if (isOK(res)) 
                     props.history.replace(`/${collection}`);
             })
-            .catch((err: Error | string) => {
-                const error = err instanceof Error ?
-                    `${err.name}: ${err.message}` : err;
-                setSaveError(error);
+            .catch((err) => {
+                setErrors({ ...errors, save: errToStr(err) });
             });
     }
     const doReset = () => {
-        setData(initials);
+        setData(initials.current);
     }
     const doCancel = () => {
         if (props.history.length > 1) props.history.goBack();
         else props.history.replace("/");
     }
 
-    useEffect(() => {
-        if (props.id !== undefined) fetchData(props.id);
-        fetchSpec();
-    }, []);
-    useEffect(() => {
-        const isSame = comparator(data, initials, false);
-        setDirty(!isSame);
-    }, [data, initials]);
-    useEffect(() => {
-        setData({ ...data, email: `${translit(data.firstName || "")}.${translit(data.lastName || "")}@realize.dev`.toLowerCase() });
-    }, [data.firstName, data.lastName]);
-
     return <div className="form">
         <div className="record-form">
-            {!!(dataError || fetchError || saveError) &&
+            {Object.values(errors).filter(v => !!v).length > 0 &&
                 <div className="message warn flex-v gap-20">
                 {
-                    [dataError, fetchError, saveError]
-                        .filter(msg => !!msg)
+                    Object.values(errors).filter(v => !!v)
                         .map(msg => <div className="msg">{msg}</div>)
                 }
                 </div>
             }
-            <div>UID: {data.userUid}</div>
             <span className="p-float-label">
                 <InputText
                     id="firstName"
@@ -235,7 +259,7 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
                     </div>
                 })}
             </fieldset>
-            <fieldset className="flex flex-v-center gap-20">
+            <fieldset className="flex flex-center gap-20">
                 <Button label="Сохранить" className="p-button-success" onClick={doSave} disabled={!dirty} />
                 <Button label="Очистить" className="p-button-secondary" onClick={doReset} disabled={!dirty} />
                 <Button label="Отмена" className="p-button-secondary" onClick={doCancel} />
@@ -244,4 +268,4 @@ const UserForm: FC<IProps & RouteComponentProps> = (props): JSX.Element => {
     </div>
 }
 
-export default withRouter(UserForm);
+export default connector(withRouter(UserForm));

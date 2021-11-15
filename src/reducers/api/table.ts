@@ -1,7 +1,7 @@
 import { IListOptions } from "../../interfaces/data";
 import { fetchHistory } from "./exams";
 
-const defaults: RequestInit = {
+export const defaults: RequestInit = {
     method: "GET",
     headers: {
         "Content-Type": "application/json"

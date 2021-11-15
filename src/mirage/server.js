@@ -123,7 +123,14 @@ export function makeServer({ environment = 'test' }) {
                     attempt.tasks = Object.values(tasks);
                 })
                 return attempts;
-            })
+            });
+
+            this.get("/tasks/:task/options", (schema, request) => {
+                const { task } = request.params;
+                const coll = schema.options.all()
+                const filtered = coll.filter(v => v.attrs.task == task);
+                return collectionToArray(filtered);
+            });
         },
     });
 }

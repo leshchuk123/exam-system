@@ -3,7 +3,10 @@
     flex-direction: column;
     gap: 36px;
 
-    .p-component:not(.p-checkbox) {
+    .p-component {
         min-width: 300px;
+        &.p-checkbox, &.p-radiobutton, &.p-button {
+            min-width: unset;
+        }
     }
 }

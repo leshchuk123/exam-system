@@ -4,6 +4,7 @@ import UserForm from "../UserForm";
 import { dicCollections } from "../../../constants/data";
 
 import "./RecordForm.scss"
+import TaskForm from "../TaskForm";
 
 const RecordForm: FC<RouteComponentProps> = (props): JSX.Element => {
 
@@ -30,6 +31,7 @@ const RecordForm: FC<RouteComponentProps> = (props): JSX.Element => {
         </h1>
 
         {collection === "users" && <UserForm id={id} />}
+        {collection === "tasks" && <TaskForm id={id} />}
     </div>
 };
 

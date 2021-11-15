@@ -95,7 +95,6 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const taskResultTemplate = (record: any) => {
         let result = true;
         record.options?.forEach((op: any) => {
-            debugger;
             result = result && op.correct;
         })
         return result ? successIcon : errorIcon;
@@ -108,7 +107,6 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const rowExpansionTemplate = (data: any) => {
         return (
             <div className="tasks-subtable">
-                <h5>Вопросы:</h5>
                 <DataTable
                     value={data.tasks}
                     expandedRows={expandedSubRows}
@@ -118,15 +116,13 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
                     rowExpansionTemplate={rowExpansionSubTemplate}
                 >
                     <Column expander style={{width: "3em"}} />
-                    <Column field="text" header="Текст задания" />
+                    <Column field="text" header="Вопросы" />
                     <Column field="date" body={taskResultTemplate} style={{width: "3em"}} />
                 </DataTable>
             </div>
         );
     }
     const rowExpansionSubTemplate = (data: any) => {
-        console.log(data);
-        debugger
         return <DataTable value={data.options}>
             <Column field="text" header="Ответы" />
             <Column field="date" body={optionResultTemplate} style={{width: "3em"}} />
@@ -138,9 +134,7 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         records={data}
         editable={false}
         expandedRows={expandedRows}
-        onRowToggle={(e) => {
-            setExpandedRows(e.data)
-        }}
+        onRowToggle={(e) => {setExpandedRows(e.data)}}
         rowExpansionTemplate={rowExpansionTemplate}
         columns={[
             {

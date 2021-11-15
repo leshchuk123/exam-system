@@ -1,11 +1,5 @@
 import { IListOptions } from "../../interfaces/data";
-
-const defaults: RequestInit = {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json"
-    },
-};
+import { defaults } from "./table";
 
 export const getExamTasks = (speciality: number, grade: number) => {
     return fetch(`/api/exam/${speciality}/${grade}`, {
