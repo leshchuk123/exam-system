@@ -46,8 +46,8 @@ export const filterCollection = function <T>(arrColl: T[], filter: DataTableFilt
             const val = String(value).toLowerCase();
             arrRes = arrRes.filter((rec) => {
                 let recVal,match;
-                if (filterName === "name") recVal = `${(rec as any).firstName} ${(rec as any).lastName}`;
-                else if ((match = filterName.match(/^(.+)\.name$/))) recVal = `${(rec as any)[match[1]].firstName} ${(rec as any)[match[1]].lastName}`;
+                if (filterName === "name") recVal = `${(rec as any).name} ${(rec as any).surname}`;
+                else if ((match = filterName.match(/^(.+)\.name$/))) recVal = `${(rec as any)[match[1]].name} ${(rec as any)[match[1]].surname}`;
                 else if ((match = filterName.match(/^(.+)\.(.+)$/))) recVal = `${(rec as any)[match[1]][match[2]]}`;
                 else recVal = (rec as any)[filterName];
                 return String(recVal).toLowerCase().indexOf(val) !== -1
@@ -70,7 +70,7 @@ export const sortCollection = function <T>(arrColl: T[], sort: DataTableSortPara
         arrColl.sort((a: AnyObject, b: AnyObject) => {
             let v1: string, v2: string;
             if (sortField.indexOf("&") !== -1) {
-                const arrFields = sortField.split(/\&/g);
+                const arrFields = sortField.split(/&/g);
                 v1 = arrFields.map(f => String(a[f])).join(" ");
                 v2 = arrFields.map(f => String(b[f])).join(" ");
             } else {

@@ -1,9 +1,8 @@
 import { FC, useContext } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppContext } from "../../app/App";
-import { IDataUser } from "../../interfaces/data";
 import { signOut } from "../../reducers/actions/auth";
-import { AppDispatch, RootState } from "../../store";
+import { AppDispatch } from "../../store";
 import Button from "../ui/Button";
 
 import "./header.scss";
@@ -29,7 +28,7 @@ const Header: FC<PropsFromRedux> = ({ signout }): JSX.Element => {
         </div>
         <div className="menu">
             {!!user?.userUid && <>
-                <div className="title_username">{`${user.firstName} ${user.lastName}`}</div>
+                <div className="title_username">{`${user.name} ${user.surname}`}</div>
                 <Button icon="sign-out" onClick={() => signout(String(user.userUid))} />
             </>}
         </div>

@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useContext, useEffect, useRef, useState } from "react";
 import { withRouter, RouteComponentProps } from "react-router";
 import { getExamTasks } from "../../../reducers/api/exams";
 import { AppContext } from "../../../app/App";
-import { IDataAnswer, IDataAttempt, IDataOption, IDataTask } from "../../../interfaces/data";
+import { IDataAnswer, IDataAttempt, IDataOption, IDataSpeciality, IDataTask } from "../../../interfaces/data";
 import { add, get } from "../../../reducers/api/table";
-import { isOK, range } from "../../../helpers";
+import { getId, isOK, range } from "../../../helpers";
 import { v4 as uuidv4 } from "uuid";
 
 import { Button } from 'primereact/button';
@@ -69,7 +70,7 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
             // запрос на получение данных для теста
             // по идентификатору специальности 
             // и текущему грейду пользователя
-            getExamTasks(Number(speciality), Number(grade) + 1)
+            getExamTasks(getId(speciality), Number(grade) + 1)
                 .then(res => {
                     if (isOK(res)) return res.json();
                 })
@@ -82,13 +83,17 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                     setState(STATE.ERROR);
                 });
 
-            get("specialities", Number(speciality))
-                .then(res => {
-                    if (isOK(res)) return res.json();
-                })
-                .then(json => {
-                    setSpecName(json.speciality.name);
-                });
+            if (!(speciality as IDataSpeciality).id) {
+                get("specialities", Number(speciality))
+                    .then(res => {
+                        if (isOK(res)) return res.json();
+                    })
+                    .then(json => {
+                        setSpecName(json.speciality.name);
+                    });
+            } else {
+                setSpecName((speciality as IDataSpeciality).name);
+            }
         } else {
             // если пользователь не авторизован
             // или у него максимальный грейд,
@@ -137,7 +142,6 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
         setState(STATE.TERMINATED);
     }
     const onOptionChange: OptionsChangeHandler = (index, value, correct) => {
-        console.log(Date.now(), "onOptionChange", {index, value, correct});
         tasks[index].selected = value;
         tasks[index].correct = correct;
         const done = [...doneTasks];

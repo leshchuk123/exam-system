@@ -4,7 +4,7 @@ import tableReducerFactory from "./table";
 import user from "./user";
 
 const users = tableReducerFactory<IDataUser>("users", {
-    firstName: { value: "", matchMode: "contains" },
+    name: { value: "", matchMode: "contains" },
     specialities: { value: [], matchMode: "in" },
     grades: { value: [], matchMode: "in" },
     roles: { value: 0, matchMode: "custom" },

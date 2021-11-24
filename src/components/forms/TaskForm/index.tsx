@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { compose } from "recompose";
 import { v4 as uuidv4 } from "uuid";
 
 import { Dropdown } from 'primereact/dropdown';
@@ -9,14 +9,14 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { RadioButton } from 'primereact/radiobutton';
 import { Button } from 'primereact/button';
 
-import { comparator, getId, isOK, range } from '../../../helpers';
+import { isEqual, getId, isOK, range } from '../../../helpers';
 import { IDataOption, IDataTask } from '../../../interfaces/data';
 import { fetchTableData } from '../../../reducers/actions/table';
 import { AppDispatch, RootState } from '../../../store';
 import { get, add, update } from '../../../reducers/api/table';
 import { errToStr } from '../../../helpers/format';
 import { getTaskOptions } from '../../../reducers/api/tasks';
-import { Checkbox, CheckboxChangeParams } from 'primereact/checkbox';
+import { Checkbox } from 'primereact/checkbox';
 
 interface OwnProps {
     id?: number
@@ -161,7 +161,7 @@ const TaskForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
     }, [id, data]);
 
     useEffect(() => {
-        const isSame = comparator(data, initials.current, false);
+        const isSame = isEqual(data, initials.current, false);
         setDirty(!isSame);
     }, [data, initials]);
     
@@ -187,7 +187,7 @@ const TaskForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                     rows={3}
                     cols={80}
                 />
-                <label htmlFor="firstName">Текст задания</label>
+                <label htmlFor="text">Текст задания</label>
             </span>
             <span className="p-float-label">
                 <Dropdown
@@ -245,7 +245,7 @@ const TaskForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                                 autoResize={true}
                                 rows={1}
                                 cols={60} />
-                            <label htmlFor="firstName">Вариант ответа</label>
+                            <label htmlFor="text">Вариант ответа</label>
                         </span>
                             {getId(data.mode) === 1 ? 
                                 <div className="p-field-radiobutton">

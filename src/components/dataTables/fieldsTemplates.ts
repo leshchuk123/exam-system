@@ -2,7 +2,7 @@ import { ROLE } from "../../constants/data";
 import { IDataMode, IDataSpeciality, IDataTask, IDataUser } from "../../interfaces/data";
 
 export const userNameTemplate = (record: IDataUser): string => {
-    return `${record.firstName} ${record.lastName}`;
+    return `${record.name} ${record.surname}`;
 }
 export const specialityTemplate = (record: IDataUser | IDataTask) => {
     const { id, name } = record.speciality as IDataSpeciality;

@@ -4,8 +4,8 @@ import { FETCH_STATE } from "../constants/data";
 export interface IDataUser {
     id?: number
     userUid?: string
-    firstName?: string
-    lastName?: string
+    name?: string
+    surname?: string
     email?: string
     speciality?: number | IDataSpeciality
     grade?: number

@@ -1,5 +1,4 @@
 import { KeyboardEvent } from "react";
-import { IDataAll } from "../interfaces/data";
 
 export const isOK = (res: Response) => res.status === 200 || res.status === 201;
 
@@ -37,46 +36,80 @@ export const iterate = (
 
 export const num2bits = (n: number) => n.toString(2).split("").reverse().map((v, i) => v === "1" ? Math.pow(2, i) : 0).filter(v => !!v);
 
-export const comparator = (v1: any, v2: any, strict = true): boolean => {
-    if (v1 === undefined || v1 === null) return v1 === v2;
-    if (v2 === undefined || v2 === null) return v1 === v2;
+export const isEqual = (v1: any, v2: any, strict = true): boolean => {
+    // case 1: проверка на undefined или null
+    // если любой из аргументов имеет значение undefined или null
+    // то возвращается строгое равенство
+    if (
+        v1 === undefined ||
+        v1 === null ||
+        v2 === undefined ||
+        v2 === null
+    ) return v1 === v2;
+
+    // case 2: проверка соответсвия типов по typeof
+    // если типы неравны, то сразу возвращается false
     const type1 = typeof v1;
     const type2 = typeof v2;
     if (type1 !== type2) return false;
-    if (type1 !== "object" || strict === true) return v1 === v2;
-    if (v1 instanceof Array) return v1.length === v2.length
-        && v1.filter((v, i) => !comparator(v, v2[i], strict)).length > 0;
-    if (v1 instanceof Map) {
-        if (v1.size !== (v2 as Map<any, any>).size) return false;
-        let res = true;
-        (v1 as Map<any, any>).forEach(
-            (val, key) => {
-                res = res && comparator((v2 as Map<any, any>).get(key), val, strict);
-            }
-        );
-        return res;
+
+    // case 3: проверка примитивных типов, символов и функций
+    // для примитивных типов, символов и функций возвращается
+    // строгое равенство аргументов
+    switch (type1) {
+        case "string":
+        case "number":
+        case "bigint":
+        case "boolean":
+        case "symbol":
+        case "function":
+            return v1 === v2;
     }
+    // case 4: проверка на равенство массивов
+    if (v1 instanceof Array) {
+        // если второй аргумент не является массивом
+        // или длина массивов разная, то результат - false
+        if (!(v2 instanceof Array)) return false;
+        if (v1.length !== v2.length) return false;
+        // если оба аргумента - один и тот же объект,
+        // то результат true
+        if (v1 === v2) return true;
+        // в режиме strict каждый элемент первого массива
+        // должен быть равен соответствующему элементу второго
+        if (strict) return v1.filter((v, i) => !isEqual(v, v2[i], strict)).length === 0;
+        // иначе сравниваются элементы отсортированных массивов
+        else {
+            const arr1 = [...v1].sort();
+            const arr2 = [...v2].sort();
+            return arr1.filter((v, i) => !isEqual(v, arr2[i], strict)).length === 0;
+        }
+    }
+    // case 5: проверка на равенство сетов
     if (v1 instanceof Set) {
+        // если второй аргумент не является сетом
+        // или длина сетов разная, то результат - false
+        if (!(v2 instanceof Set)) return false;
         if (v1.size !== (v2 as Set<any>).size) return false;
-        let res = true;
-        (v1 as Set<any>).forEach(
-            (val) => {
-                res = res && (v2 as Set<any>).has(val);
-            }
-        );
-        return res;
+        // если оба аргумента - один и тот же объект,
+        // то результат true
+        if (v1 === v2) return true;
+        // иначе оба сета преобразуются в массивы и сравниваются
+        return isEqual([...v1], [...v2], strict);
     }
-    if (v1 instanceof Object) {
-        const keys1 = Object.keys(v1);
-        const keys2 = Object.keys(v2 as Object);
-        if (keys1.length !== keys2.length) return false;
-        let res = true;
-        keys1.forEach(key => {
-            res = res && comparator(v1[key], v2[key], strict);
-        })
-        return res;
+    // case 6: проверка на равенство мапов
+    if (v1 instanceof Map) {
+        // если второй аргумент не является сетом
+        // или длина сетов разная, то результат - false
+        if (!(v2 instanceof Map)) return false;
+        if (v1.size !== (v2 as Map<any, any>).size) return false;
+        // если оба аргумента - один и тот же объект,
+        // то результат true
+        if (v1 === v2) return true;
+        // иначе оба сета преобразуются в массивы и сравниваются
+        return isEqual(Object.fromEntries(v1), Object.fromEntries(v2), strict)
     }
-    return false;
+    // case 7: проверка на равенство объектов
+    return Object.keys(v1).filter(key => !isEqual(v1[key], v2[key], strict)).length === 0;
 };
 
 export const getId = (data: any) => {

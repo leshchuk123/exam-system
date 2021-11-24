@@ -32,12 +32,12 @@ export const answers: IData.IDataAnswer[] = [
     { id: 0 }
 ]
 
-export const users: IData.IDataUser[] = [
+export const devUsers: IData.IDataUser[] = [
     {
         id: 1,
         userUid: "a9c0a48e-8dc1-4bbe-aea0-d5973a118e9a",
-        firstName: "Андрей",
-        lastName: "Лещук",
+        name: "Андрей",
+        surname: "Лещук",
         email: "leshchuk@front.ru",
         speciality: 2,
         grade: 16,

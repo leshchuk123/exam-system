@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useRef, useState } from "react";
 import { withRouter , RouteComponentProps } from "react-router";
 import { v4 as uuidv4 } from "uuid";
@@ -8,11 +9,11 @@ import { Calendar } from 'primereact/calendar';
 import { Checkbox, CheckboxChangeParams } from 'primereact/checkbox';
 import { Button } from 'primereact/button';
 
-import { IDataSpeciality, IDataUser } from "../../../interfaces/data";
+import { IDataUser } from "../../../interfaces/data";
 import { ROLES } from "../../../constants/data";
-import { comparator, isOK, range } from "../../../helpers";
-import { errToStr, translit } from "../../../helpers/format";
-import { add, get, list, update } from "../../../reducers/api/table";
+import { isEqual, isOK, range } from "../../../helpers";
+import { errToStr } from "../../../helpers/format";
+import { add, get, update } from "../../../reducers/api/table";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
 import { fetchTableData } from "../../../reducers/actions/table";
@@ -50,8 +51,8 @@ interface IErrors {
 }
 const defaults: IDataUser = {
     userUid: uuidv4(),
-    firstName: "",
-    lastName: "",
+    name: "",
+    surname: "",
     email: "",
     speciality: undefined,
     grade: 1,
@@ -110,7 +111,7 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
     }, [id, data, fetching]);
 
     useEffect(() => {
-        const isSame = comparator(data, initials.current, false);
+        const isSame = isEqual(data, initials.current, false);
         setDirty(!isSame);
     }, [data, initials]);
 
@@ -146,25 +147,25 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
             }
             <span className="p-float-label">
                 <InputText
-                    id="firstName"
-                    name="firstName"
-                    value={data.firstName}
+                    id="name"
+                    name="name"
+                    value={data.name}
                     onChange={(e) => {
-                        setData({ ...data, firstName: e.target.value });
+                        setData({ ...data, name: e.target.value });
                     }}
                 />
-                <label htmlFor="firstName">Имя</label>
+                <label htmlFor="name">Имя</label>
             </span>
             <span className="p-float-label">
                 <InputText
-                    id="lastName"
-                    name="lastName"
-                    value={data.lastName}
+                    id="surname"
+                    name="surname"
+                    value={data.surname}
                     onChange={(e) => {
-                        setData({ ...data, lastName: e.target.value });
+                        setData({ ...data, surname: e.target.value });
                     }}
                 />
-                <label htmlFor="lastName">Фамилия</label>
+                <label htmlFor="surname">Фамилия</label>
             </span>
             <span className="p-float-label">
                 <InputText
@@ -175,7 +176,7 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                         setData({ ...data, email: e.target.value });
                     }}
                 />
-                <label htmlFor="lastName">E-mail</label>
+                <label htmlFor="email">E-mail</label>
             </span>
             <span className="p-float-label">
                 <Dropdown

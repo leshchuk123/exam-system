@@ -3,8 +3,8 @@ import { FETCH_STATE } from "../constants/data";
 
 export const defaultUser: IDataUser = {
     id: 0,
-    firstName: "",
-    lastName: "",
+    name: "",
+    surname: "",
     userUid: "",
     hiringDate: "",
     accessDate: "",

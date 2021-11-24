@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useContext, useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch, RootState } from "../../../store";
@@ -86,11 +87,11 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
 
     const userNameTemplate = (record: IDataAttempt): string => {
         const user = record.user as IDataUser;
-        return user ? `${user?.firstName} ${user?.lastName}` : "";
+        return user ? `${user?.name} ${user?.surname}` : "";
     }
     const reviewerNameTemplate = (record: IDataAttempt): string => {
         const user = record.reviewer as IDataUser;
-        return user ? `${user?.firstName} ${user?.lastName}` : "";
+        return user ? `${user?.name} ${user?.surname}` : "";
     }
     const taskResultTemplate = (record: any) => {
         let result = true;

@@ -1,9 +1,8 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { ITask } from ".";
 
-import { RadioButton, RadioButtonChangeParams, RadioButtonProps } from 'primereact/radiobutton';
-import { Checkbox, CheckboxChangeParams, CheckboxProps } from 'primereact/checkbox';
-import { comparator } from "../../../helpers";
+import { RadioButton, RadioButtonChangeParams } from 'primereact/radiobutton';
+import { Checkbox, CheckboxChangeParams } from 'primereact/checkbox';
+import { isEqual } from "../../../helpers/index";
 import { arrAddUnique, arrRemove, isIn } from "../../../helpers/array";
 import { IDataMode, IDataOption } from "../../../interfaces/data";
 
@@ -32,14 +31,14 @@ const Options:FC<IProps> = (props):JSX.Element => {
                 arrRemove(sel, Number(e.value))
             ).sort();
         }
-        const isCorrect = comparator(correct.current, result);
-        setSelected(result)
+        const isCorrect = isEqual(correct.current, result, false);
+        setSelected(result);
         onChange(index, result, isCorrect);
     };
 
     useEffect(() => {
         setSelected(props.selected);
-    }, []);
+    }, [props.selected]);
 
     return <>
         {options.map((op, i) => {
