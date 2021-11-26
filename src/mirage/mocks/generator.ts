@@ -23,17 +23,16 @@ export const generateDump = () => {
 
     let tasks: IDataTask[] = [];
     let taskId = 0;
-    const taskFactory = (id: number, speciality: number, grade: number): IDataTask => ({
-        id,
-        text: `Задача ${taskId}. ${lorem.generateSentences(1)}`,
-        speciality,
-        grade,
-        mode: rnd(1, 2),
-    })
     // генерация заданий: для грейдов с 8 по 16 и для всех трех специальностей
     for (let grade = 8; grade < 17; grade++) {
-        for (let spec = 1; spec < 4; spec++) {
-            tasks = tasks.concat(range(1, rnd(15, 25), taskFactory(++taskId, spec, grade )));
+        for (let speciality = 1; speciality < 4; speciality++) {
+            tasks = tasks.concat(range(1, rnd(15, 25), () => ({
+                id: ++taskId,
+                text: `Задача ${taskId}. ${lorem.generateSentences(1)}`,
+                speciality,
+                grade,
+                mode: rnd(1, 2),
+            })));
         }
     }
     // перемешивание заданий в случайном порядке и установка идентификаторов
@@ -92,7 +91,7 @@ export const generateDump = () => {
         modes,
         users: [
             ...devUsers,
-            ...range(devUsers.length + 1, 35, (i: number) => {
+            ...range(4, 35, (i: number) => {
                 const name = russianName.one();
                 name.name = rndArrItem(names[name.gender]);
                 name.transliteration.name = translit(name.name);

@@ -35,7 +35,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start --mode development",
+    "start": "react-scripts start",
+    "startdev": "react-scripts start --mode development",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
