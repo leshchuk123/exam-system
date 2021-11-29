@@ -11,7 +11,7 @@ import { Button } from 'primereact/button';
 
 import { IDataUser } from "../../../interfaces/data";
 import { ROLES } from "../../../constants/data";
-import { isEqual, isOK, range } from "../../../helpers";
+import { getId, isEqual, isOK, range } from "../../../helpers";
 import { errToStr } from "../../../helpers/format";
 import { add, get, update } from "../../../reducers/api/table";
 import { connect, ConnectedProps } from "react-redux";
@@ -89,7 +89,7 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
         } else if (specialities.length) {
             setFetching({ ...fetching, specialities: false });
         }
-    }, [specialities, fetching, fetchSpecialities]);
+    }, [specialities, fetchSpecialities]);
 
     useEffect(() => {
         if (id && !data && !fetching.data) {
@@ -108,7 +108,7 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                     setFetching({ ...fetching, data: true });
                 });
         }
-    }, [id, data, fetching]);
+    }, [id, data]);
 
     useEffect(() => {
         const isSame = isEqual(data, initials.current, false);
@@ -182,7 +182,7 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                 <Dropdown
                     id="speciality"
                     name="speciality"
-                    value={data.speciality}
+                    value={getId(data.speciality)}
                     options={specialities}
                     onChange={(evt) => {
                         setData({ ...data, speciality: evt.value });

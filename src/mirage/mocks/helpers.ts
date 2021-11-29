@@ -54,7 +54,10 @@ export const filterCollection = function <T>(arrColl: T[], filter: DataTableFilt
             });
         }
         else if (matchMode === "in" && value instanceof Array && value.length > 0) {
-            arrRes = arrRes.filter((v: any) => value.indexOf(v[pluralize.singular(filterName)]) !== -1);
+            arrRes = arrRes.filter((rec: AnyObject) => {
+                const v: any = rec[pluralize.singular(filterName)];
+                return (value.indexOf(v.id || v) !== -1)
+            });
         }
         else if (matchMode === "custom" && !!value) {
             if (filterName === "roles") {
@@ -74,8 +77,8 @@ export const sortCollection = function <T>(arrColl: T[], sort: DataTableSortPara
                 v1 = arrFields.map(f => String(a[f])).join(" ");
                 v2 = arrFields.map(f => String(b[f])).join(" ");
             } else {
-                v1 = a[sortField];
-                v2 = b[sortField];
+                v1 = a[sortField].id || a[sortField];
+                v2 = b[sortField].id || b[sortField];
             }
             const res = v1 > v2 ? 1 : v1 < v2 ? -1 : 0;
             return res * Number(sortOrder);

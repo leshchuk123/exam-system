@@ -153,6 +153,8 @@ export const process = (collection, requestBody, schema) => {
     const { sort = null, filter } = options;
     // преобразование коллекции в массив
     let arr = collectionToArray(collection).filter(v => v.id > 0);
+    // обработка внешних ключей
+    arr = processRelations(arr, schema);
     // сортиовка и фильтрация
     if (sort) arr = sortCollection(arr, sort);
     arr = filterCollection(arr, filter);
@@ -166,7 +168,5 @@ export const process = (collection, requestBody, schema) => {
     );
     // выделение массива записей страницы
     const data = slicePage(arr, page, pageSize);
-    // обработка внешних ключей
-    arr = processRelations(data, schema);
     return { page, total, pageSize, data, sort, filter };
 };

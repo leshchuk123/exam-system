@@ -1,8 +1,8 @@
-import { IListOptions } from "../../interfaces/data";
+import { IDataAttempt, IListOptions } from "../../interfaces/data";
 import { AppDispatch } from "../../store";
 import { isOK } from "../../helpers";
 import { errToStr } from "../../helpers/format";
-import { del, get, list } from "../api/table";
+import { del, get, list, update } from "../api/table";
 
 const pluralize = require('pluralize');
 
@@ -66,5 +66,13 @@ export const getTableRecord = (table: string, id: number, dispatch: AppDispatch)
                 type: `${pluralize.singular(table)}_fetch_error`,
                 payload: { error: errToStr(error) }
             })
+        });
+}
+
+export const doApprove = (attempt: IDataAttempt, dispatch: AppDispatch) => {
+    update("attempts", attempt)
+        .then(res => {
+            const {page = 1, pageSize = 20, options = {}} = JSON.parse(String(localStorage.getItem(`exams:table:attempts`)));
+            return fetchTableData("attempts", page, pageSize, options, dispatch);
         });
 }

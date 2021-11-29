@@ -63,6 +63,7 @@ const MultiSelectFilter: FC<IProps> = (props): JSX.Element => {
         optionLabel="text"
         optionValue="value"
         value={filterValue}
+        selectAll={false}
         onChange={(filterData) => {
             applyFilter(filterData.value);
         }}

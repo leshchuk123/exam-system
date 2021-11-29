@@ -9,8 +9,8 @@ import "./datatable.scss";
 import { IDataAll } from "../../../interfaces/data";
 import { Link } from "react-router-dom";
 
-interface IDataTableColumnProps extends ColumnProps {
-    body?: (rowData: IDataAll) => string
+export interface IDataTableColumnProps extends ColumnProps {
+    body?: (rowData: IDataAll) => (string | JSX.Element)
     showApplyButton?: boolean
 }
 interface IProps extends DataTableProps {

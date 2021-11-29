@@ -8,13 +8,15 @@ import { DataTableFilterMatchModeType, DataTableSortParams, DataTable } from 'pr
 import { Column } from "primereact/column";
 
 import { AppContext } from "../../../app/App";
-import Table from "../DataTable";
+import Table, {IDataTableColumnProps} from "../DataTable";
 
 import { IDataAttempt, IDataUser, IListOptions } from "../../../interfaces/data";
-import { COLOR, FETCH_STATE } from "../../../constants/data";
-import { fetchTableData } from "../../../reducers/actions/table";
+import { COLOR, FETCH_STATE, ROLE } from "../../../constants/data";
+import { fetchTableData, doApprove } from "../../../reducers/actions/table";
 import { dateFormater } from "../../../helpers/format";
 import TextFilter from "../filterElemets/TextFilter";
+import { Button } from "primereact/button";
+import { getId } from "../../../helpers";
 
 const mapState = (state: RootState) => {
     const { data, page, total, pageSize, status, error, sort, filter } = state.attempts;
@@ -24,6 +26,13 @@ const mapDispatch = (dispatch: AppDispatch) => {
     return {
         fetch: (page:number, pageSize:number, options:IListOptions) => fetchTableData("attempts", page, pageSize, options, dispatch),
         clearData: () => dispatch({ type: "attempts_clear" }),
+        doApprove: (record: IDataAttempt, reviewer: number) => {
+            doApprove({
+                ...record,
+                user: getId(record.user),
+                reviewer
+            }, dispatch)
+        },
     }
 }
 const connector = connect(mapState, mapDispatch);
@@ -56,6 +65,7 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         error,
         fetch,
         clearData,
+        doApprove,
     } = props;
 
     const [filter, setFilter] = useState<IFilters>(defFilter);
@@ -63,13 +73,33 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const [loading, setLoading] = useState(false);
     const [expandedRows, setExpandedRows] = useState<any[]>([]);
     const [expandedSubRows, setExpandedSubRows] = useState<any[]>([]);
+    const [admin, setAdmin] = useState(false);
 
     const { user } = useContext(AppContext);
+    console.log({user})
+
+    useEffect(() => {
+        const { userUid, roles = 0 } = user;
+        const auth = !!userUid;
+        const isAdmin = auth && !!(roles & ROLE.ADMIN);
+        setAdmin(isAdmin);
+        if (auth && !isAdmin) setFilter({
+            ...defFilter,
+            filters: {
+                ...defFilter.filters,
+                "user.name": {
+                    value: `${user.name || ""} ${user.surname || ""}`
+                        .replace(/^\s+|\s+$/, "").toLowerCase(),
+                    matchMode: "contains"
+                }
+            }
+        });
+        if (!auth) clearData();
+    }, [user]);
 
     useEffect(() => {
         if (!!user.userUid) fetch(Number(page), Number(pageSize), { sort, filter });
-        else clearData();
-    }, [user, sort, filter]);
+    }, [sort, filter, user]);
 
     useEffect(() => {
         setLoading(status === FETCH_STATE.LOADING);
@@ -129,6 +159,48 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
             <Column field="date" body={optionResultTemplate} style={{width: "3em"}} />
         </DataTable>
     }
+    const columns: IDataTableColumnProps[] = [
+        {
+            expander: true,
+            style: { width: "3em" }
+        },
+        {
+            field: "user",
+            header: "Экзаменуемый",
+            body: userNameTemplate,
+            filter: admin,
+            filterElement: admin ? <TextFilter
+                filterName="user.name"
+                {...{ filter, setFilter }}
+            /> : null,
+        },
+        {
+            field: "reviewer",
+            header: "Проверяющий",
+            body: reviewerNameTemplate,
+            filter: admin,
+            filterElement: admin ? <TextFilter
+                filterName="reviewer.name"
+                {...{ filter, setFilter }}
+            /> : null,
+        },
+        { field: "examDate", header: "Дата", body: (row: IDataAttempt) => dateFormater(row.examDate), sortable: true },
+        { field: "result", header: "Результат", sortable: true },
+    ];
+    if (admin) {
+        columns.push({
+            body: (row: IDataAttempt) => <div className="row_controls">
+                {!row.reviewer && <Button
+                    icon="pi pi-check"
+                    className="p-button-rounded p-button-success p-button-raised"
+                    onClick={() => {
+                        doApprove(row, getId(user));
+                    }}
+                />}
+            </div>,
+            style: { width: "5em" }
+        });
+    }
     return <Table
         title="История тестирования"
         collection="attempts"
@@ -137,34 +209,7 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         expandedRows={expandedRows}
         onRowToggle={(e) => {setExpandedRows(e.data)}}
         rowExpansionTemplate={rowExpansionTemplate}
-        columns={[
-            {
-                expander: true,
-                style: {width: "3em"}
-            },
-            {
-                field: "user",
-                header: "Экзаменуемый",
-                body: userNameTemplate,
-                filter: true,
-                filterElement: <TextFilter
-                    filterName="user.name"
-                    {...{ filter, setFilter }}
-                />,
-            },
-            {
-                field: "reviewer",
-                header: "Проверяющий",
-                body: reviewerNameTemplate,
-                filter: true,
-                filterElement: <TextFilter
-                    filterName="reviewer.name"
-                    {...{ filter, setFilter }}
-                />,
-            },
-            { field: "examDate", header: "Дата", body: (row: IDataAttempt) => dateFormater(row.examDate), sortable: true },
-            { field: "result", header: "Результат", sortable: true },
-        ]}
+        columns={columns}
         {...{ total, pageSize, page, loading, sort, onPageChange, onSort, error }}
     />;
 }

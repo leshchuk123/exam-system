@@ -141,26 +141,27 @@ const UsersList: FC<PropsFromRedux> = (props): JSX.Element => {
                         data={range(1, 16).map(v => ({ value: v, text: `${v} grade` }))}
                         {...{ filter, setFilter }}
                     />,
+                    style: { width: 150 },
                 },
-                { field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true },
+                // { field: "hiringDate", header: "Дата найма", body: (row: IDataUser) => dateFormater(row.hiringDate), sortable: true },
                 { field: "accessDate", header: "Последняя активность", body: (row: IDataUser) => dateFormater(row.accessDate), sortable: true },
-                {
-                    field: "roles",
-                    header: "Группы",
-                    body: rolesTemplate,
-                    sortable: true,
-                    filter: true,
-                    filterField: "roles",
-                    filterElement: <BitwiseMulyiSelectFilter
-                        filterName="roles"
-                        data={[
-                            { text: "Пользователи", value: ROLE.EXAMINEE },
-                            { text: "Администраторы", value: ROLE.ADMIN },
-                            { text: "Руководители", value: ROLE.SUPERVISOR },
-                        ]}
-                        {...{ filter, setFilter }}
-                    />
-                },
+                // {
+                //     field: "roles",
+                //     header: "Группы",
+                //     body: rolesTemplate,
+                //     sortable: true,
+                //     filter: true,
+                //     filterField: "roles",
+                //     filterElement: <BitwiseMulyiSelectFilter
+                //         filterName="roles"
+                //         data={[
+                //             { text: "Пользователи", value: ROLE.EXAMINEE },
+                //             { text: "Администраторы", value: ROLE.ADMIN },
+                //             { text: "Руководители", value: ROLE.SUPERVISOR },
+                //         ]}
+                //         {...{ filter, setFilter }}
+                //     />
+                // },
             ]}
             {...{ total, pageSize, page, loading, sort, onPageChange, onSort, onDelCallback, error }}
         />

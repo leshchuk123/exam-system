@@ -98,9 +98,13 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
             // если пользователь не авторизован
             // или у него максимальный грейд,
             // то он перенаправляется на главную страницу
-            history.replace("/");
+            redirectTo("/");
         }
-    }, [user, history]);
+    }, [user]);
+
+    const redirectTo = (path: string) => {
+        history.replace(path);
+    }
 
     useEffect(() => {
         switch (state) {
@@ -110,7 +114,7 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                 doSave();
                 break;
             case STATE.RESOLVED:
-                history.replace("/history");
+                redirectTo("/history");
                 break;
         }
     }, [state]);
