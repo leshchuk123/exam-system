@@ -178,7 +178,10 @@ const UsersList: FC = (): JSX.Element => {
                     />
                 },
             ]}
-            {...{ total, pageSize, page, loading, sort, onPageChange, onSort, onDelCallback, error }}
+            {...{
+                total, pageSize, page, loading, sort,
+                onPageChange, onSort, onDelCallback, error
+            }}
         />
     </>
 }

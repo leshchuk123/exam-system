@@ -1,37 +1,29 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useContext, useEffect, useState } from "react";
-import { connect, ConnectedProps } from "react-redux";
-import { AppDispatch, RootState } from "../../../store";
+import { useDispatch, useSelector } from "react-redux";
+
 import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableFilterMatchModeType, DataTableSortParams } from 'primereact/datatable';
+import {
+    DataTableFilterMatchModeType,
+    DataTableSortParams
+} from 'primereact/datatable';
 
-import Table from "../DataTable";
-
-import { IDataAll, IListOptions } from "../../../interfaces/data";
-import { FETCH_STATE } from "../../../constants/data";
-import { deleteTableRecord, fetchTableData } from "../../../reducers/actions/table";
-import { modeTemplate, specialityTemplate } from "../fieldsTemplates";
-import { range } from "../../../helpers";
-import MultiSelectFilter from "../filterElemets/MultiSelectFilter";
 import { AppContext } from "../../../app/App";
+import { RootState } from "../../../store";
+import Table from "../DataTable";
+import MultiSelectFilter from "../filterElemets/MultiSelectFilter";
+import {
+    modeTemplate,
+    specialityTemplate
+} from "../fieldsTemplates";
 
-const mapState = (state: RootState) => {
-    const { data, page, total, pageSize, status, error, sort, filter } = state.tasks;
-    return {
-        data, page, total, pageSize, status, error, sort, filter,
-        specialities: state.specialities.data,
-    }
-}
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        fetch: (page:number, pageSize:number, options:IListOptions) => fetchTableData("tasks", page, pageSize, options, dispatch),
-        delRec: (id: number) => deleteTableRecord("tasks", id, dispatch),
-        fetchSpecialities: () => fetchTableData("specialities", 1, 100, {}, dispatch),
-        clearData: () => dispatch({ type: "tasks_clear" }),
-    }
-}
-const connector = connect(mapState, mapDispatch);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
+import { range } from "../../../helpers";
+import {
+    deleteTableRecord,
+    fetchTableData
+} from "../../../reducers/actions/table";
+import { IDataAll } from "../../../interfaces/data";
+import { FETCH_STATE } from "../../../constants/data";
 
 export interface IFilters {
     filters: {
@@ -49,20 +41,21 @@ const defFilter: IFilters = {
     }
 };
 
-const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
+const TasksList: FC = (): JSX.Element => {
     const {
         data,
         page,
         total,
         pageSize,
         status,
-        error,
-        specialities,
-        fetch,
-        fetchSpecialities,
-        delRec,
-        clearData,
-    } = props;
+        error
+    } = useSelector((state: RootState) => {
+        return state.tasks;
+    });
+    const specialities = useSelector((state: RootState) => {
+        return state.specialities.data;
+    });
+    const dispatch = useDispatch();
 
     const [filter, setFilter] = useState<IFilters>(defFilter);
     const [sort, setSort] = useState<DataTableSortParams>();
@@ -71,21 +64,38 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
     const { user } = useContext(AppContext);
 
     useEffect(() => {
-        if (!!user.userUid) {
-            fetch(Number(page), Number(pageSize), { sort, filter });
-            fetchSpecialities();
-        }
-        else clearData();
+        if (!user.userUid) 
+            dispatch({ type: "tasks_clear" });
+        else
+            fetchTableData(
+                "tasks",
+                Number(page),
+                Number(pageSize),
+                { sort, filter },
+                dispatch
+            );
     }, [user, sort, filter]);
+
+    useEffect(() => {
+        if (!specialities.length) {
+            fetchTableData("specialities", 1, 100, {}, dispatch);
+        }
+    }, []);
 
     useEffect(() => {
         setLoading(status === FETCH_STATE.LOADING);
     }, [status]);
 
-    const onPageChange = (pageData: PaginatorPageState) => {
-        let { page, rows } = pageData;
+    const onPageChange = (e: PaginatorPageState) => {
+        let { page, rows } = e;
         if (rows !== pageSize) page = 0;
-        fetch(Number(page + 1), Number(rows), {sort, filter})
+        fetchTableData(
+            "tasks",
+            Number(page + 1),
+            Number(rows),
+            { sort, filter },
+            dispatch
+        );
     }
 
     const onSort = (sort: DataTableSortParams) => {
@@ -93,7 +103,7 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
     }
 
     const onDelCallback = (row: IDataAll) => {
-        delRec(row.id);
+        deleteTableRecord("tasks", row.id, dispatch)
     }
 
     return <Table
@@ -122,14 +132,24 @@ const TasksList: FC<PropsFromRedux> = (props): JSX.Element => {
                 filterField: "grades",
                 filterElement: <MultiSelectFilter
                     filterName="grades"
-                    data={range(1, 16).map(v => ({ value: v, text: `${v} grade` }))}
+                    data={range(1, 16).map(v => ({
+                        value: v, text: `${v} grade`
+                    }))}
                     {...{ filter, setFilter }}
                 />,
             },
-            {field: "mode", header: "Режим ответа", body: modeTemplate, sortable: true},
+            {
+                field: "mode",
+                header: "Режим ответа",
+                body: modeTemplate,
+                sortable: true
+            },
         ]}
-        {...{ total, pageSize, page, loading, sort, onPageChange, onSort, onDelCallback, error }}
+        {...{
+            total, pageSize, page, loading, sort,
+            onPageChange, onSort, onDelCallback, error
+        }}
     />
 }
 
-export default connector(TasksList);
+export default TasksList;

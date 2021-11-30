@@ -29,3 +29,9 @@
     gap: 8px;
     user-select: none;
 }
+.p-column-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: inline-block;
+}
