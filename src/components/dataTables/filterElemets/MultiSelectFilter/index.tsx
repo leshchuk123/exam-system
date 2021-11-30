@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, memo, useEffect, useRef, useState } from "react";
 import { DataTableFilterParams } from "primereact/datatable";
 import { MultiSelect } from "primereact/multiselect";
@@ -30,9 +31,8 @@ const MultiSelectFilter: FC<IProps> = (props): JSX.Element => {
         setFilter,
     } = props;
 
-    const [filterValue, setFilterValue] = useState<number[]>(filter?.filters[filterName]?.value || []);
+    const filterValue = useRef<number[]>(filter?.filters[filterName]?.value || []);
     const [options, setOptions] = useState(data);
-    const coll = useRef(collection)
 
     useEffect(() => {
         if (collection) {
@@ -62,7 +62,7 @@ const MultiSelectFilter: FC<IProps> = (props): JSX.Element => {
         options={options}
         optionLabel="text"
         optionValue="value"
-        value={filterValue}
+        value={filterValue.current}
         selectAll={false}
         onChange={(filterData) => {
             applyFilter(filterData.value);

@@ -1,10 +1,10 @@
-import React, { FC, ReactElement } from "react";
+import { FC, ReactElement } from "react";
 
 import TextInput from "../TextInput";
 
 import { InputProps } from "../TextInput";
 
-const EmailInput: FC<InputProps> = (props): ReactElement => {
+const PasswordInput: FC<InputProps> = (props): ReactElement => {
     const {label = "Пароль", fieldName} = props;
     const addProps: InputProps = {
         type: "password",
@@ -18,4 +18,4 @@ const EmailInput: FC<InputProps> = (props): ReactElement => {
     />
 }
 
-export default EmailInput;
+export default PasswordInput;

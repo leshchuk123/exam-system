@@ -14,8 +14,7 @@ const tableReducerFactory = function <T>(name: string, filters: DataTableFilterM
             multiSortMeta: undefined
         },
         filter: {
-            filters: {
-            }
+            filters: {}
         },
         status: FETCH_STATE.NONE,
         error: "",

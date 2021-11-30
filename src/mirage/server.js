@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import { createServer, Model } from "miragejs"
 import { rndArrSlice, shuffle } from "../helpers/array";
 import { collectionToArray, sortCollection, slicePage, filterCollection, saveDumpToStorage } from "./mocks/helpers";
@@ -29,8 +30,6 @@ export function makeServer({ environment = 'test' }) {
             });
 
             this.post("/users/signout", (schema, request) => {
-                const data = JSON.parse(request.requestBody);
-                // const {uid} = data;
                 return true;
             });
 

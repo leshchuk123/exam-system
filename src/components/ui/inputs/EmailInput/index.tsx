@@ -1,5 +1,4 @@
-import React, { FC, ReactElement } from "react";
-import { AnyMaskedOptions } from "imask";
+import { FC, ReactElement } from "react";
 
 import TextInput from "../TextInput";
 

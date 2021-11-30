@@ -22,20 +22,28 @@ export const generateDump = () => {
     });
 
     let tasks: IDataTask[] = [];
-    let taskId = 0;
+
+    const taskGenerator = function* () {
+        let id = 0;
+        while (true) {
+            yield {
+                id: ++id,
+                text: `Задача ${id}. ${lorem.generateSentences(1)}`,
+                mode: rnd(1, 2),
+            };
+        }
+    };
+    const gen = taskGenerator();
+
     // генерация заданий: для грейдов с 8 по 16 и для всех трех специальностей
     for (let grade = 8; grade < 17; grade++) {
-        for (let speciality = 1; speciality < 4; speciality++) {
+        for (let speciality = 2; speciality < 5; speciality++) {
             tasks = tasks.concat(range(1, rnd(15, 25), () => ({
-                id: ++taskId,
-                text: `Задача ${taskId}. ${lorem.generateSentences(1)}`,
-                speciality,
-                grade,
-                mode: rnd(1, 2),
+                ...gen.next().value, speciality, grade
             })));
         }
     }
-    // перемешивание заданий в случайном порядке и установка идентификаторов
+    // перемешивание заданий в случайном порядке и переназначение идентификаторов
     tasks = shuffle(tasks);
     tasks.forEach((task, i) => { task.id = (i + 1) });
 

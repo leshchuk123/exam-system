@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import UserForm from "../UserForm";
@@ -15,7 +16,7 @@ const RecordForm: FC = (): JSX.Element => {
     const history = useHistory();
     
     useEffect(() => {
-        const match = history.location.pathname.match(/\/([^\/]+)\/([^\/]+)(?:\/(\d+))?/);
+        const match = history.location.pathname.match(/\/([^/]+)\/([^/]+)(?:\/(\d+))?/);
         if (match) {
             setCollection(match[1]);
             setMode(match[2]);
