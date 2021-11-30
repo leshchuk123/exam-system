@@ -23,6 +23,8 @@ export const range = (from = 1, to = 10, value: any = undefined): any[] => {
     return rng;
 }
 
+export const GRADES = range(1, 16, (i: number) => ({ value: i, text: `${i} грейд` }));
+
 // итеративный вызов times раз функции callback с первым аргументом - счетчиком i и аргументами args
 export const iterate = (
     callback: (i: number, ...args: any[]) => any,

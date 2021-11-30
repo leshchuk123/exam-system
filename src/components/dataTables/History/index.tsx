@@ -1,43 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useContext, useEffect, useState } from "react";
-import { connect, ConnectedProps } from "react-redux";
-import { AppDispatch, RootState } from "../../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 import { PaginatorPageState } from 'primereact/paginator';
-import { DataTableFilterMatchModeType, DataTableSortParams, DataTable } from 'primereact/datatable';
+import {
+    DataTableFilterMatchModeType,
+    DataTableSortParams,
+    DataTable
+} from 'primereact/datatable';
 import { Column } from "primereact/column";
+import { Button } from "primereact/button";
 
 import { AppContext } from "../../../app/App";
 import Table, {IDataTableColumnProps} from "../DataTable";
-
-import { IDataAttempt, IDataUser, IListOptions } from "../../../interfaces/data";
-import { COLOR, FETCH_STATE, ROLE } from "../../../constants/data";
-import { fetchTableData, doApprove } from "../../../reducers/actions/table";
-import { dateFormater } from "../../../helpers/format";
 import TextFilter from "../filterElemets/TextFilter";
-import { Button } from "primereact/button";
+
+import { dateFormater } from "../../../helpers/format";
 import { getId } from "../../../helpers";
-
-const mapState = (state: RootState) => {
-    const { data, page, total, pageSize, status, error, sort, filter } = state.attempts;
-    return { data, page, total, pageSize, status, error, sort, filter }
-}
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        fetch: (page:number, pageSize:number, options:IListOptions) => fetchTableData("attempts", page, pageSize, options, dispatch),
-        clearData: () => dispatch({ type: "attempts_clear" }),
-        doApprove: (record: IDataAttempt, reviewer: number) => {
-            doApprove({
-                ...record,
-                user: getId(record.user),
-                reviewer
-            }, dispatch)
-        },
-    }
-}
-const connector = connect(mapState, mapDispatch);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
+import {
+    fetchTableData,
+    doApprove
+} from "../../../reducers/actions/table";
+import {
+    IDataAttempt,
+    IDataUser
+} from "../../../interfaces/data";
+import { COLOR, FETCH_STATE, ROLE } from "../../../constants/data";
 
 export interface IFilters {
     filters: {
@@ -55,18 +44,18 @@ const defFilter: IFilters = {
 };
 
 
-const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
+const AttemptsList: FC = (): JSX.Element => {
     const {
         data,
         page,
         total,
         pageSize,
         status,
-        error,
-        fetch,
-        clearData,
-        doApprove,
-    } = props;
+        error
+    } = useSelector((state: RootState) => {
+        return state.attempts;
+    });
+    const dispatch = useDispatch();
 
     const [filter, setFilter] = useState<IFilters>(defFilter);
     const [sort, setSort] = useState<DataTableSortParams>();
@@ -94,11 +83,20 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
                 }
             }
         });
-        if (!auth) clearData();
+        if (!auth) dispatch({ type: "attempts_clear" });
     }, [user]);
 
     useEffect(() => {
-        if (!!user.userUid) fetch(Number(page), Number(pageSize), { sort, filter });
+        if (!user.userUid) 
+            dispatch({ type: "users_clear" });
+        else
+            fetchTableData(
+                "attempts",
+                Number(page),
+                Number(pageSize),
+                { sort, filter },
+                dispatch
+            );
     }, [sort, filter, user]);
 
     useEffect(() => {
@@ -108,7 +106,13 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
     const onPageChange = (pageData: PaginatorPageState) => {
         let { page, rows } = pageData;
         if (rows !== pageSize) page = 0;
-        fetch(Number(page + 1), Number(rows), {sort, filter})
+        fetchTableData(
+            "attempts",
+            Number(page + 1),
+            Number(rows),
+            { sort, filter },
+            dispatch
+        );
     }
 
     const onSort = (sort: DataTableSortParams) => {
@@ -184,8 +188,17 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
                 {...{ filter, setFilter }}
             /> : null,
         },
-        { field: "examDate", header: "Дата", body: (row: IDataAttempt) => dateFormater(row.examDate), sortable: true },
-        { field: "result", header: "Результат", sortable: true },
+        {
+            field: "examDate",
+            header: "Дата",
+            body: (row: IDataAttempt) => dateFormater(row.examDate),
+            sortable: true
+        },
+        {
+            field: "result",
+            header: "Результат",
+            sortable: true
+        },
     ];
     if (admin) {
         columns.push({
@@ -194,7 +207,11 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
                     icon="pi pi-check"
                     className="p-button-rounded p-button-success p-button-raised"
                     onClick={() => {
-                        doApprove(row, getId(user));
+                        doApprove({
+                            ...row,
+                            user: getId(row.user),
+                            reviewer: getId(user)
+                        }, dispatch);
                     }}
                 />}
             </div>,
@@ -210,8 +227,17 @@ const AttemptsList: FC<PropsFromRedux> = (props): JSX.Element => {
         onRowToggle={(e) => {setExpandedRows(e.data)}}
         rowExpansionTemplate={rowExpansionTemplate}
         columns={columns}
-        {...{ total, pageSize, page, loading, sort, onPageChange, onSort, error }}
+        {...{
+            total,
+            pageSize,
+            page,
+            loading,
+            sort,
+            onPageChange,
+            onSort,
+            error
+        }}
     />;
 }
 
-export default connector(AttemptsList);
+export default AttemptsList;

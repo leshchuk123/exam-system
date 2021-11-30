@@ -1,100 +1,70 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect, useRef, useState } from "react";
-import { withRouter , RouteComponentProps } from "react-router";
+import { useHistory } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
-import { Checkbox, CheckboxChangeParams } from 'primereact/checkbox';
+import {
+    Checkbox,
+    CheckboxChangeParams
+} from 'primereact/checkbox';
 import { Button } from 'primereact/button';
+
+import { RootState } from "../../../store";
+import { add, get, update } from "../../../reducers/api/table";
+import { fetchTableData } from "../../../reducers/actions/table";
+import { getId, GRADES, isEqual, isOK } from "../../../helpers";
+import { errToStr } from "../../../helpers/format";
 
 import { IDataUser } from "../../../interfaces/data";
 import { ROLES } from "../../../constants/data";
-import { getId, isEqual, isOK, range } from "../../../helpers";
-import { errToStr } from "../../../helpers/format";
-import { add, get, update } from "../../../reducers/api/table";
-import { connect, ConnectedProps } from "react-redux";
-import { AppDispatch, RootState } from "../../../store";
-import { fetchTableData } from "../../../reducers/actions/table";
+import { IErrors, IIsFetching } from "./interfaces";
+import { defaults, defFetchingState } from "./constants";
 
-interface OwnProps {
+interface IProps {
     id?: number
 }
 
-const mapState = (state: RootState, props: OwnProps) => {
-    const user = state.users.data.filter(v => v.id === props.id)[0];
-    return {
-        user,
-        specialities: state.specialities.data,
-        // modes: state.modes.data,
-    }
-}
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        fetchSpecialities: () => fetchTableData("specialities", 1, 100, {}, dispatch),
-        // fetchModes: () => fetchTableData("modes", 1, 100, {}, dispatch),
-    }
-}
-const connector = connect(mapState, mapDispatch);
+const UserForm: FC<IProps> = (props): JSX.Element => {
+    const { id } = props;
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-interface IIsFetching {
-    data: boolean
-    specialities: boolean
-}
-interface IErrors {
-    data?: string
-    specialities?: string
-    save?: string
-}
-const defaults: IDataUser = {
-    userUid: uuidv4(),
-    name: "",
-    surname: "",
-    email: "",
-    speciality: undefined,
-    grade: 1,
-    hiringDate: undefined,
-    accessDate: undefined,
-    roles: 1,
-};
-const defFetchingState = {
-    data: false,
-    specialities: false,
-}
-const GRADES = range(1, 16, (i: number) => ({ value: i, text: `${i} грейд` }));
-
-const collection = "users";
-
-const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): JSX.Element => {
-    const {
-        id,
-        user,
-        specialities,
-        fetchSpecialities,
-    }=props
     const [errors, setErrors] = useState<IErrors>({});
     const [fetching, setFetching] = useState<IIsFetching>(defFetchingState);
     const [dirty, setDirty] = useState(false);
 
-    const [data, setData] = useState<IDataUser>({ ...defaults, ...(user || {}) });
-    const initials = useRef<IDataUser>({ ...defaults, ...(user || {}) });
+    const user = useSelector((state: RootState) => {
+        return state.users.data.find(user => user.id === id)
+    });
+    const specialities = useSelector((state: RootState) => {
+        return state.specialities.data;
+    });
+
+    const [data, setData] = useState<IDataUser>({
+        ...defaults, ...(user || {})
+    });
+    const initials = useRef<IDataUser>({
+        ...defaults, ...(user || {})
+    });
+    
+    const dispatch = useDispatch();
+    const history = useHistory();
 
     useEffect(() => {
-        if (!specialities.length && !fetching.specialities && fetchSpecialities) {
+        if (!specialities.length && !fetching.specialities) {
             setFetching({ ...fetching, specialities: true });
-            fetchSpecialities();
+            fetchTableData("specialities", 1, 100, {}, dispatch);
         } else if (specialities.length) {
             setFetching({ ...fetching, specialities: false });
         }
-    }, [specialities, fetchSpecialities]);
+    }, [specialities]);
 
     useEffect(() => {
         if (id && !data && !fetching.data) {
             setFetching({ ...fetching, data: true });
-            get(collection, id)
+            get("users", id)
                 .then(res => {
                     if (isOK(res)) return res.json();
                 })
@@ -102,10 +72,14 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                     setData(json);
                 })
                 .catch(err => {
-                    setErrors({ ...errors, data: errToStr(err) });
+                    setErrors({
+                        ...errors, data: errToStr(err)
+                    });
                 })
                 .finally(() => {
-                    setFetching({ ...fetching, data: true });
+                    setFetching({
+                        ...fetching, data: true
+                    });
                 });
         }
     }, [id, data]);
@@ -116,23 +90,25 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
     }, [data, initials]);
 
     const doSave = () => {
-        setErrors({ ...errors, data: undefined });
+        setErrors({ ...errors, save: undefined });
         const promise = data.id === undefined ? add : update;
-        promise(collection, data)
+        promise("users", data)
             .then(res => {
                 if (isOK(res)) 
-                    props.history.replace(`/${collection}`);
+                    history.replace(`/users`);
             })
             .catch((err) => {
-                setErrors({ ...errors, save: errToStr(err) });
+                setErrors({
+                    ...errors, save: errToStr(err)
+                });
             });
     }
     const doReset = () => {
         setData(initials.current);
     }
     const doCancel = () => {
-        if (props.history.length > 1) props.history.goBack();
-        else props.history.replace("/");
+        if (history.length > 1) history.goBack();
+        else history.replace("/");
     }
 
     return <div className="form">
@@ -241,7 +217,10 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
             <fieldset className="flex flex-v-center gap-20">
                 <legend>Группы</legend>
                 {ROLES.map((role, i) => {
-                    return <div className="flex gap-10 p-field-checkbox" key={uuidv4()}>
+                    return <div
+                        className="flex gap-10 p-field-checkbox"
+                        key={uuidv4()}
+                    >
                         <Checkbox
                             inputId={`role${i}`}
                             name="role"
@@ -261,12 +240,21 @@ const UserForm: FC<OwnProps & PropsFromRedux & RouteComponentProps> = (props): J
                 })}
             </fieldset>
             <fieldset className="flex flex-center gap-20">
-                <Button label="Сохранить" className="p-button-success" onClick={doSave} disabled={!dirty} />
-                <Button label="Очистить" className="p-button-secondary" onClick={doReset} disabled={!dirty} />
-                <Button label="Отмена" className="p-button-secondary" onClick={doCancel} />
+                <Button
+                    label="Сохранить"
+                    className="p-button-success"
+                    onClick={doSave} disabled={!dirty} />
+                <Button
+                    label="Очистить"
+                    className="p-button-secondary"
+                    onClick={doReset} disabled={!dirty} />
+                <Button
+                    label="Отмена"
+                    className="p-button-secondary"
+                    onClick={doCancel} />
             </fieldset>
         </div>
     </div>
 }
 
-export default connector(withRouter(UserForm));
+export default UserForm;

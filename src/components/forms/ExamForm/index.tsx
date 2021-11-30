@@ -1,21 +1,39 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useContext, useEffect, useRef, useState } from "react";
-import { withRouter, RouteComponentProps } from "react-router";
-import { getExamTasks } from "../../../reducers/api/exams";
-import { AppContext } from "../../../app/App";
-import { IDataAnswer, IDataAttempt, IDataOption, IDataSpeciality, IDataTask } from "../../../interfaces/data";
-import { add, get } from "../../../reducers/api/table";
-import { getId, isOK, range } from "../../../helpers";
+import {
+    FC,
+    useContext,
+    useEffect,
+    useRef,
+    useState
+} from "react";
+import { useHistory } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 
 import { Button } from 'primereact/button';
-import { TabView, TabPanel } from 'primereact/tabview';
+import {
+    TabView,
+    TabPanel
+} from 'primereact/tabview';
 
-import "./examform.scss";
+import { AppContext } from "../../../app/App";
 import Options, { OptionsChangeHandler } from "./Options";
 import Countdown, { COMMAND } from "../components/Countdown";
-import { MS } from "../../../constants/data";
+
+import { getExamTasks } from "../../../reducers/api/exams";
+import { add, get } from "../../../reducers/api/table";
+
+import { getId, isOK, range } from "../../../helpers";
 import { errToStr } from "../../../helpers/format";
+import { MS } from "../../../constants/data";
+import {
+    IDataAnswer,
+    IDataAttempt,
+    IDataOption,
+    IDataSpeciality,
+    IDataTask
+} from "../../../interfaces/data";
+
+import "./examform.scss";
 
 export interface ITask extends IDataTask {
     options: IDataOption[]
@@ -37,8 +55,9 @@ enum STATE {
     RESOLVED, // результаты теста сохранены
 }
 
-const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
-    const { history } = props;
+const ExamForm: FC = (): JSX.Element => {
+
+    const history = useHistory();
     // данные пользователя из контекста приложения
     const { user } = useContext(AppContext);
 
@@ -53,8 +72,8 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
     const [activeTask, setActiveTask] = useState(0);
     const [doneTasks, setDoneTasks] = useState<boolean[]>(range(0, 10, false));
     const [timerCommand, setTimerCommand] = useState(COMMAND.STOP);
-    const start = useRef<number>();
     const [error, setError] = useState("");
+    const start = useRef<number>();
 
     useEffect(() => {
         const { userUid, speciality, grade } = user;
@@ -207,7 +226,9 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
             />
         </div>
 
-        {state === STATE.READY && <div className="message flex-v flex-center gap-20">
+        {state === STATE.READY && <div
+            className="message flex-v flex-center gap-20"
+        >
             <div className="">
                 Тест состоит из {tasks.length} заданий,
                 на выполнение которых отводится {tasks.length * 3} мин.
@@ -220,12 +241,26 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
             />
         </div>}
 
-        {state === STATE.FETCHING && <div className="message info flex-v">Загрузка данных...</div>}
+        {state === STATE.FETCHING && <div
+            className="message info flex-v">
+            Загрузка данных...
+        </div>}
 
-        {state === STATE.ERROR && <div className="message warn flex-v">{error}</div>}
+        {state === STATE.ERROR && <div
+            className="message warn flex-v">
+            {error}
+        </div>}
         
-        {(state === STATE.STARTED || state === STATE.PROCESS || state === STATE.DONE) && <>
-            <TabView activeIndex={activeTask} onTabChange={(e) => setActiveTask(e.index)} scrollable>
+        {(
+            state === STATE.STARTED ||
+            state === STATE.PROCESS ||
+            state === STATE.DONE
+        ) && <>
+            <TabView
+                activeIndex={activeTask}
+                onTabChange={(e) => setActiveTask(e.index)}
+                scrollable
+            >
                 {tasks.map((task, i) => {
                     return (
                         <TabPanel
@@ -247,9 +282,6 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
                                     onChange={onOptionChange} 
                                 />
                             </div>
-                            {/* <pre>
-                                {JSON.stringify(task.options,null,2)}
-                            </pre> */}
                         </TabPanel>
                     );
                 })}
@@ -271,10 +303,15 @@ const ExamForm: FC<RouteComponentProps> = (props): JSX.Element => {
             </div>
         </>}
 
-        {(state === STATE.SUBMITING || state === STATE.ABORTED || state === STATE.TERMINATED) &&
-            <div className="message info flex-v">Сохранение данных...</div>
+        {(
+            state === STATE.SUBMITING ||
+            state === STATE.ABORTED ||
+            state === STATE.TERMINATED
+        ) && <div className="message info flex-v">
+            Сохранение данных...
+        </div>
         }
     </div>
 };
 
-export default withRouter(ExamForm);
+export default ExamForm;

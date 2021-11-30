@@ -1,7 +1,17 @@
 import { FC } from "react";
-import { DataTable, DataTableProps, DataTableSortParams } from 'primereact/datatable';
-import { Column, ColumnProps } from 'primereact/column';
-import { Paginator, PaginatorPageState } from 'primereact/paginator';
+import {
+    DataTable,
+    DataTableProps,
+    DataTableSortParams
+} from 'primereact/datatable';
+import {
+    Column,
+    ColumnProps
+} from 'primereact/column';
+import {
+    Paginator,
+    PaginatorPageState
+} from 'primereact/paginator';
 import { Button } from 'primereact/button';
 import { v4 as uuidv4 } from "uuid";
 

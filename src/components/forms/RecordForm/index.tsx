@@ -1,19 +1,20 @@
 import { FC, useEffect, useState } from "react";
-import { withRouter, RouteComponentProps } from "react-router";
+import { useHistory } from "react-router";
 import UserForm from "../UserForm";
 import { dicCollections } from "../../../constants/data";
 
 import "./RecordForm.scss"
 import TaskForm from "../TaskForm";
 
-const RecordForm: FC<RouteComponentProps> = (props): JSX.Element => {
+const RecordForm: FC = (): JSX.Element => {
 
     const [collection, setCollection] = useState<string>();
     const [mode, setMode] = useState<string>();
     const [id, setId] = useState<number>();
 
+    const history = useHistory();
+    
     useEffect(() => {
-        const { history } = props;
         const match = history.location.pathname.match(/\/([^\/]+)\/([^\/]+)(?:\/(\d+))?/);
         if (match) {
             setCollection(match[1]);
@@ -35,4 +36,4 @@ const RecordForm: FC<RouteComponentProps> = (props): JSX.Element => {
     </div>
 };
 
-export default withRouter(RecordForm);
+export default RecordForm;
